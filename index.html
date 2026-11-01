@@ -910,7 +910,7 @@ async function health() {
             data.status==="ok" ? "var(--green)" : "var(--warning)";
 
         $("healthText").textContent =
-            data.status==="ok" ? "Backend online" : "Backend issue";
+            data.status==="ok" ? "Online" : "Backend issue";
 
         const available =
             data.local_recognition_available ??
