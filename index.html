@@ -607,8 +607,7 @@ footer {
         Camera video is used by MediaPipe in your browser for live hand
         tracking. When you request OpenHands translation, a short recorded
         video clip is uploaded to the SignBridge backend for processing.
-        The recognition model is not currently deployed on the public
-        backend, so ISL recognition may be unavailable. The camera is not
+        The OpenHands ISL model is hosted on a separate public backend. Short recorded video clips are uploaded for experimental isolated-sign recognition. Recognition availability depends on the hosting service. The camera is not
         continuously streamed to the backend.
     </p>
     <p class="small">
@@ -634,7 +633,8 @@ import {
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
 
 const $ = id => document.getElementById(id);
-const API_BASE = "https://signbridge-api-88ep.onrender.com";
+const ISL_API_BASE = "https://signbridge-isl-u7s0.onrender.com"; 
+const ASSISTANT_API_BASE = "https://signbridge-api-88ep.onrender.com";
 
 let stream = null;
 let landmarker = null;
@@ -901,7 +901,7 @@ document.querySelectorAll(".mode").forEach(button=>{
 
 async function health() {
     try {
-        const response = await fetch(`${API_BASE}/api/health`);
+        const response = await fetch(`${ISL_API_BASE}/api/health`);
         if (!response.ok) throw new Error("Health check failed");
 
         const data = await response.json();
@@ -935,20 +935,29 @@ async function health() {
         assistantTitle.textContent = "AI assistant: ";
 
         const assistantDetail = document.createElement("span");
-        assistantDetail.textContent = data.assistant_configured
-            ? `SignBridge AI assistant connected.`
+        try {
+        const assistantResponse = await fetch(
+            `${ASSISTANT_API_BASE}/api/health`
+        );
+        const assistantData = await assistantResponse.json();
+
+        assistantDetail.textContent = assistantData.assistant_configured
+            ? "SignBridge AI assistant connected."
             : "Assistant configuration not confirmed.";
-
-        $("assistantStatus").append(assistantTitle,assistantDetail);
-
-    } catch(error) {
-        $("healthDot").style.background = "var(--danger)";
-        $("healthText").textContent = "Backend unavailable";
-        $("recognitionStatus").textContent =
-            "Sign recognition: Backend unavailable";
-        $("assistantStatus").textContent =
-            "AI assistant: Backend unavailable";
+    } catch (error) {
+        assistantDetail.textContent = "Assistant backend unavailable.";
     }
+
+            $("assistantStatus").append(assistantTitle,assistantDetail);
+
+        } catch(error) {
+            $("healthDot").style.background = "var(--danger)";
+            $("healthText").textContent = "Backend unavailable";
+            $("recognitionStatus").textContent =
+                "Sign recognition: Backend unavailable";
+            $("assistantStatus").textContent =
+                "AI assistant: Backend unavailable";
+        }
 }
 
 health();
@@ -1407,7 +1416,7 @@ async function recognizeOneWindow(runId) {
     formData.append("file",videoBlob,"sign-recording.webm");
     formData.append("language","ISL");
 
-    const response = await fetch(`${API_BASE}/api/predict`,{
+    const response = await fetch(`${ISL_API_BASE}/api/predict`,{
         method:"POST",
         body:formData
     });
@@ -1672,7 +1681,7 @@ async function explainTranslation() {
         ". Do not invent additional signs or meanings.";
 
     try {
-        const response = await fetch(`${API_BASE}/api/chat`,{
+        const response = await fetch(`${ASSISTANT_API_BASE}/api/chat`,{
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({
@@ -1723,7 +1732,7 @@ async function send() {
     $("send").disabled = true;
 
     try {
-        const response = await fetch(`${API_BASE}/api/chat`,{
+        const response = await fetch(`${ASSISTANT_API_BASE}/api/chat`,{
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({
