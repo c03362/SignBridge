@@ -937,7 +937,7 @@ async function health() {
 
         const assistantDetail = document.createElement("span");
         assistantDetail.textContent = data.assistant_configured
-            ? `SignBridge AI assistant connected (${data.assistant_model || "Groq"}).`
+            ? `SignBridge AI assistant connected.`
             : "Assistant configuration not confirmed.";
 
         $("assistantStatus").append(assistantTitle,assistantDetail);
