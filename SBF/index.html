@@ -1,0 +1,1800 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>SignBridge — Communication without barriers</title>
+
+<style>
+#translationMeta {
+    white-space: pre-line;
+    line-height: 1.7;
+}
+.finger-count-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr 1.4fr;
+    gap:10px;
+    text-align:center;
+}
+@media(max-width:500px) {
+    .finger-count-grid {grid-template-columns:1fr 1fr}
+    .finger-count-grid > div:last-child {grid-column:1 / -1}
+}
+:root {
+    color-scheme:dark;
+    --bg:#0b1220;
+    --panel:#121e31;
+    --panel2:#192941;
+    --line:#2a3d57;
+    --ink:#f3f7ff;
+    --muted:#aab8ca;
+    --cyan:#6ee7df;
+    --blue:#8aa8ff;
+    --green:#55d6a0;
+    --warning:#ffd18a;
+    --danger:#ff8585;
+}
+* {box-sizing:border-box}
+html {scroll-behavior:smooth}
+body {
+    margin:0;
+    background:radial-gradient(ellipse at 15% 0%,#1a3450 0,transparent 42%),var(--bg);
+    color:var(--ink);
+    font:15px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+}
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+button:disabled {opacity:.45;cursor:not-allowed}
+header {
+    max-width:1250px;
+    margin:auto;
+    padding:20px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+.brand {font-size:1.45rem;font-weight:850;letter-spacing:-.05em}
+.brand span {color:var(--cyan)}
+.header-right {display:flex;align-items:center;gap:18px}
+.status {display:flex;align-items:center;gap:9px;color:var(--muted);font-size:.84rem}
+.status-dot {width:9px;height:9px;border-radius:50%;background:#e6aa52}
+nav {display:flex;gap:7px;flex-wrap:wrap}
+nav a {
+    color:var(--muted);
+    text-decoration:none;
+    padding:8px 11px;
+    border-radius:9px;
+    font-size:.88rem;
+}
+nav a:hover {background:var(--panel2);color:var(--ink)}
+main {max-width:1250px;margin:auto;padding:15px 24px 65px}
+.hero {padding:28px 0 35px}
+.eyebrow {
+    color:var(--cyan);
+    font-size:.76rem;
+    text-transform:uppercase;
+    letter-spacing:.16em;
+    font-weight:800;
+}
+.hero h1 {
+    font-size:clamp(2.4rem,6vw,4.5rem);
+    line-height:1.04;
+    letter-spacing:-.06em;
+    max-width:850px;
+    margin:13px 0;
+}
+.hero p {color:var(--muted);max-width:720px;font-size:1.05rem}
+.panel {
+    background:linear-gradient(145deg,var(--panel),#101a2a);
+    border:1px solid var(--line);
+    border-radius:19px;
+    padding:20px;
+    min-width:0;
+}
+.panel h2 {font-size:1.08rem;margin:0 0 14px}
+.panel h3 {font-size:.96rem;margin:0 0 9px}
+.section {margin-top:20px}
+.section-heading {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+}
+.section-heading h2 {margin:0;font-size:1.2rem}
+.muted {color:var(--muted)}
+.small {font-size:.83rem;color:var(--muted)}
+.tiny {font-size:.75rem;color:var(--muted)}
+.grid {display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:18px}
+.two-col {display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.mode-grid {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.mode {
+    text-align:left;
+    color:var(--ink);
+    background:#0e192a;
+    border:1px solid var(--line);
+    border-radius:13px;
+    padding:13px;
+    min-height:90px;
+}
+.mode:hover {border-color:var(--cyan)}
+.mode.active {border-color:var(--cyan);background:#163342}
+.mode strong {display:block;font-size:.94rem}
+.mode span {display:block;color:var(--muted);font-size:.76rem;margin-top:4px}
+.mode-symbol {font-size:1.35rem;margin-bottom:4px}
+.video-wrap {
+    position:relative;
+    background:#050a12;
+    border:1px solid var(--line);
+    border-radius:15px;
+    overflow:hidden;
+    aspect-ratio:16/10;
+    display:grid;
+    place-items:center;
+}
+.video-wrap video {
+    width:100%;height:100%;object-fit:cover;transform:scaleX(-1)
+}
+#handCanvas {
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;transform:scaleX(-1);
+    pointer-events:none;z-index:2
+}
+.placeholder {
+    position:absolute;z-index:3;color:var(--muted);
+    text-align:center;padding:20px
+}
+.controls {display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+.btn {
+    border:0;border-radius:10px;padding:10px 15px;
+    font-weight:750;background:var(--cyan);color:#09202a
+}
+.btn.secondary {
+    background:var(--panel2);border:1px solid var(--line);color:var(--ink)
+}
+.btn.danger {background:#542d38;color:#ffe3e3}
+.btn.small-btn {padding:7px 11px;font-size:.8rem}
+.field {margin:13px 0}
+label {display:block;color:var(--muted);font-size:.82rem;margin-bottom:6px}
+select,input,textarea {
+    width:100%;background:#0b1525;color:var(--ink);
+    border:1px solid var(--line);border-radius:10px;padding:11px
+}
+textarea {resize:vertical;min-height:85px}
+.result {
+    background:#0b1525;border:1px solid var(--line);
+    border-radius:12px;padding:13px;min-height:58px;
+    color:var(--muted);overflow-wrap:anywhere;margin-top:10px
+}
+.result strong {color:var(--ink)}
+.confidence {color:var(--cyan);font-weight:750}
+.notice {
+    border-left:3px solid var(--warning);
+    padding:10px 12px;background:#332a2a55;
+    color:#f6d9a8;border-radius:7px;font-size:.84rem;margin-top:13px
+}
+.success-note {
+    border-left:3px solid var(--green);
+    padding:10px 12px;background:#1c3c3555;
+    color:#b8f0d7;border-radius:7px;font-size:.84rem;margin-top:12px
+}
+.chatlog {
+    height:245px;overflow:auto;display:flex;flex-direction:column;
+    gap:9px;margin:12px 0
+}
+.bubble {
+    padding:10px 12px;border-radius:12px;
+    background:var(--panel2);max-width:95%;overflow-wrap:anywhere;
+    white-space:pre-wrap
+}
+.bubble.user {align-self:flex-end;background:#1c5260}
+.chatrow {display:flex;gap:8px}
+.chatrow input {flex:1;min-width:0}
+
+/* Floating assistant */
+
+#assistantWidget {
+    position:fixed;
+    right:22px;
+    bottom:22px;
+    z-index:9999;
+}
+.assistant-bubble {
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    border:none;
+    background:#176b78;
+    color:white;
+    font-size:28px;
+    cursor:pointer;
+    box-shadow:0 5px 22px #0006;
+    display:grid;
+    place-items:center;
+}
+.assistant-bubble:hover {transform:scale(1.06)}
+.assistant-bubble[hidden] {display:none!important}
+.assistant-panel {
+    width:360px;
+    max-width:calc(100vw - 24px);
+    height:min(500px,calc(100vh - 110px));
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px;
+    box-shadow:0 8px 35px #0008;
+    display:flex;
+    flex-direction:column;
+    margin-bottom:12px;
+}
+.assistant-panel[hidden] {display:none!important}
+.assistant-header {
+    max-width:none;
+    width:100%;
+    margin:0;
+    padding:0 0 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    border-bottom:1px solid var(--line);
+    flex-shrink:0;
+}
+.assistant-minimize {
+    width:36px;
+    height:36px;
+    border:1px solid var(--line);
+    border-radius:9px;
+    background:var(--panel2);
+    color:var(--ink);
+    font-size:23px;
+    cursor:pointer;
+}
+.assistant-panel .chatlog {
+    flex:1;
+    min-height:0;
+    height:auto;
+    overflow-y:auto;
+}
+.assistant-panel .chatrow {flex-shrink:0}
+.assistant-panel .chatrow input {min-width:0}
+@media(max-width:480px) {
+    #assistantWidget {right:12px;bottom:12px}
+    .assistant-panel {
+        width:calc(100vw - 24px);
+        height:min(480px,calc(100dvh - 100px));
+    }
+}
+
+.translation-text {
+    font-size:1.3rem;font-weight:750;color:var(--ink);
+    min-height:40px;overflow-wrap:anywhere
+}
+.history-list {display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.history-item {
+    background:#0b1525;
+    border:1px solid var(--line);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:.87rem;
+    display:block;
+    min-width:0;
+}
+.history-item-label {
+    overflow-wrap:anywhere;
+    color:var(--ink);
+}
+.history-correction {
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:8px;
+}
+.history-correction input {
+    flex:1;
+    min-width:110px;
+    padding:8px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--panel2);
+    color:var(--ink);
+}
+.history-correction button {flex-shrink:0}
+.stat-row {display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.stat {
+    flex:1;min-width:100px;background:#0b1525;
+    padding:12px;border:1px solid var(--line);border-radius:11px
+}
+.stat strong {display:block;font-size:1.25rem}
+.stat span {font-size:.75rem;color:var(--muted)}
+.feature-grid {display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.feature {
+    background:#0e192a;border:1px solid var(--line);
+    border-radius:13px;padding:15px
+}
+.feature-icon {font-size:1.5rem}
+.feature p {font-size:.83rem;color:var(--muted);margin-bottom:0}
+footer {
+    max-width:1250px;margin:25px auto 0;padding:20px 24px 35px;
+    color:var(--muted);font-size:.82rem;border-top:1px solid var(--line)
+}
+.hidden {display:none!important}
+@media(max-width:900px) {
+    .grid {grid-template-columns:1fr}
+    .mode-grid {grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px) {
+    header {padding:16px;align-items:flex-start;flex-direction:column}
+    .header-right {width:100%;justify-content:space-between}
+    nav {gap:2px}
+    nav a {padding:7px;font-size:.8rem}
+    main {padding:8px 14px 40px}
+    .hero {padding:18px 0 25px}
+    .panel {padding:15px}
+    .mode-grid {grid-template-columns:repeat(2,1fr)}
+    .two-col,.feature-grid {grid-template-columns:1fr}
+    .video-wrap {aspect-ratio:4/3}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">Sign<span>Bridge</span></div>
+    <div class="header-right">
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#translate">Translate</a>
+            <a href="#assistant">AI assistant</a>
+            <a href="#about">About</a>
+        </nav>
+        <div class="status">
+            <i class="status-dot" id="healthDot"></i>
+            <span id="healthText">Checking...</span>
+        </div>
+    </div>
+</header>
+
+<main>
+
+<section class="hero" id="home">
+    <div class="eyebrow">Accessible communication technology</div>
+    <h1>Communication without barriers.</h1>
+    <p>
+        SignBridge is a sign-language communication workspace
+        designed to bring live hand tracking, sign recognition,
+        translation and AI assistance together.
+    </p>
+    <div class="controls">
+        <a href="#translate"><button class="btn">Open translation workspace</button></a>
+        <a href="#about"><button class="btn secondary">Explore SignBridge</button></a>
+    </div>
+</section>
+
+<section class="panel section" id="translate">
+    <div class="section-heading">
+        <h2>Choose your recognition mode</h2>
+        <span class="small" id="modeLabel">ISL selected</span>
+    </div>
+
+    <div class="mode-grid">
+        <button class="mode active" data-mode="ISL">
+            <div class="mode-symbol">🤟</div>
+            <strong>ISL</strong>
+            <span>Indian Sign Language</span>
+        </button>
+        <button class="mode" data-mode="ASL">
+            <div class="mode-symbol">🖐️</div>
+            <strong>ASL</strong>
+            <span>American Sign Language</span>
+        </button>
+        <button class="mode" data-mode="BSL">
+            <div class="mode-symbol">🤝</div>
+            <strong>BSL</strong>
+            <span>British Sign Language</span>
+        </button>
+        <button class="mode" data-mode="CSL">
+            <div class="mode-symbol">✋</div>
+            <strong>CSL</strong>
+            <span>Chinese Sign Language</span>
+        </button>
+        <button class="mode" data-mode="GENERIC">
+            <div class="mode-symbol">🔢</div>
+            <strong>Finger counting</strong>
+            <span>Generic numbers 0–10</span>
+        </button>
+    </div>
+
+    <p class="small" id="modeDescription">
+        ISL mode selected. Recognition requires a compatible trained ISL model.
+    </p>
+
+    <div id="fingerCounter" class="panel hidden" style="margin-top:16px;background:#102b35">
+        <div class="section-heading">
+            <h2>Live finger counting</h2>
+            <span class="small">Generic mode · 0–10</span>
+        </div>
+
+        <div class="finger-count-grid">
+            <div class="result">
+                <div class="small">Left hand</div>
+                <div id="leftFingerCount" style="font-size:2rem;font-weight:800;color:var(--cyan)">–</div>
+            </div>
+            <div class="result">
+                <div class="small">Right hand</div>
+                <div id="rightFingerCount" style="font-size:2rem;font-weight:800;color:var(--cyan)">–</div>
+            </div>
+            <div class="result">
+                <div class="small">Combined total</div>
+                <div id="totalFingerCount" style="font-size:2.5rem;font-weight:850;color:var(--green)">–</div>
+            </div>
+        </div>
+
+        <div class="result" id="fingerCountMessage">
+            Show one or both hands to the camera.
+        </div>
+        <p class="tiny">
+            Counts extended fingers across both detected hands.
+            Keep your palms and fingertips visible to the camera.
+        </p>
+    </div>
+</section>
+
+<div class="grid section">
+
+<section class="panel">
+    <h2>Live camera workspace</h2>
+
+    <div class="video-wrap">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="handCanvas"></canvas>
+        <div class="placeholder" id="placeholder">
+            <div style="font-size:2rem">📷</div>
+            Start your camera to begin hand tracking
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="start">Start camera</button>
+        <button class="btn secondary" id="stop" disabled>Stop camera</button>
+        <button class="btn" id="recognize">Start continuous translation</button>
+    </div>
+
+    <div class="result" id="tracking" aria-live="polite">
+        <strong>Hand tracking:</strong> Not started
+    </div>
+    <div class="result" id="gestureResult" aria-live="polite">
+        <strong>Everyday gesture:</strong> Waiting for a gesture
+    </div>
+
+    <div class="result">
+        <strong>Live translation</strong>
+        <div class="translation-text" id="liveTranslation">Waiting for signs...</div>
+        <div class="small" id="translationMeta">No recognition result yet.</div>
+    </div>
+
+    <div class="controls">
+        <button class="btn secondary" id="addSentence" disabled>Add to sentence</button>
+        <button class="btn secondary" id="explain" disabled>Explain translation</button>
+    </div>
+
+    <div class="notice" id="recognitionNotice">
+        OpenHands INCLUDE is running locally for experimental ISL
+        isolated-sign recognition. Predictions may be incorrect.
+        ASL, BSL and CSL are not supported by this checkpoint.
+    </div>
+</section>
+
+<aside class="panel">
+    <h2>Recognition services</h2>
+    <div class="result" id="recognitionStatus">
+        <strong>Sign recognition:</strong> Checking...
+    </div>
+    <div class="result" id="assistantStatus">
+        <strong>AI assistant:</strong> Checking...
+    </div>
+    <div class="result" id="cameraStatus">
+        <strong>Camera:</strong> Not started
+    </div>
+
+    <h2 style="margin-top:24px">Translation sentence</h2>
+    <div class="result" style="min-height:100px">
+        <div id="sentenceText">Your translated sentence will appear here.</div>
+    </div>
+    <div class="controls">
+        <button class="btn secondary small-btn" id="copySentence">Copy sentence</button>
+        <button class="btn secondary small-btn" id="clearSentence">Clear sentence</button>
+    </div>
+
+    <h2 style="margin-top:24px">Translation history</h2>
+    <div class="history-list" id="historyList">
+        <div class="small">No translations yet.</div>
+    </div>
+    <button class="btn secondary small-btn" id="clearHistory" style="margin-top:10px">
+        Clear history
+    </button>
+</aside>
+
+</div>
+
+<section class="panel section">
+    <h2>Translation explanation</h2>
+    <div class="result" id="detailedTranslation">
+        <strong>AI explanation:</strong> No translation selected.
+    </div>
+</section>
+
+<!-- Floating assistant navigation target -->
+<span id="assistant" class="hidden" aria-hidden="true"></span>
+
+<!-- Floating SignBridge AI assistant -->
+<div id="assistantWidget">
+    <section
+        id="assistantPanel"
+        class="assistant-panel"
+        aria-label="SignBridge AI assistant"
+        hidden
+    >
+        <header class="assistant-header">
+            <div>
+                <strong>SignBridge AI</strong>
+                <div class="small">Your sign-language assistant</div>
+            </div>
+            <button
+                id="assistantMinimize"
+                class="assistant-minimize"
+                aria-label="Minimise assistant"
+                type="button"
+            >−</button>
+        </header>
+
+        <div class="chatlog" id="chatlog">
+            <div class="bubble">
+                Hello! I'm the SignBridge assistant. I can explain recognised results and answer questions. I cannot independently interpret your camera feed.
+            </div>
+        </div>
+
+        <div class="chatrow">
+            <input
+                id="message"
+                placeholder="Ask SignBridge..."
+                maxlength="4000"
+                aria-label="Message to SignBridge"
+            >
+            <button class="btn" id="send" type="button">Send</button>
+        </div>
+    </section>
+
+    <button
+        id="assistantBubble"
+        class="assistant-bubble"
+        type="button"
+        aria-label="Open SignBridge AI assistant"
+        aria-expanded="false"
+        aria-controls="assistantPanel"
+    >💬</button>
+</div>
+
+<section class="panel section" id="about">
+    <h2>About SignBridge</h2>
+    <p class="muted">
+        Our goal is to develop an accessible communication platform
+        supporting multiple sign languages and generic finger counting.
+    </p>
+    <div class="feature-grid">
+        <div class="feature">
+            <div class="feature-icon">📷</div>
+            <h3>Live hand tracking</h3>
+            <p>Browser-based hand tracking with 21 landmarks per detected hand.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🌐</div>
+            <h3>Multiple languages</h3>
+            <p>Separate recognition pathways are needed for ISL, ASL, BSL and CSL.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🤖</div>
+            <h3>AI assistance</h3>
+            <p>Ask questions and request explanations of supplied recognition results.</p>
+        </div>
+    </div>
+</section>
+
+<section class="panel section">
+    <h2>Privacy and camera information</h2>
+    <p class="small">
+        Camera video is used by MediaPipe in your browser for live hand
+        tracking. When you request OpenHands translation, a short recorded
+        video clip is uploaded to your SignBridge backend for local
+        recognition. The OpenHands model processes that clip on your
+        computer. The camera is not continuously streamed to a remote
+        recognition service.
+    </p>
+    <p class="small">
+        Do not record or submit another person's signs without their
+        knowledge and consent. Dataset recordings should use an
+        appropriate consent process.
+    </p>
+</section>
+
+</main>
+
+<footer>
+    SignBridge — Communication without barriers.
+    <br>
+    Sign-language recognition is experimental until validated
+    with appropriately licensed datasets and diverse signers.
+</footer>
+
+<script type="module">
+import {
+    FilesetResolver,
+    GestureRecognizer
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+const $ = id => document.getElementById(id);
+
+let stream = null;
+let landmarker = null;
+let raf = 0;
+let lastVideoTime = -1;
+let frames = [];
+
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecordingSign = false;
+let continuousEnabled = false;
+let continuousRunId = 0;
+
+let lastAutoAddedLabel = "";
+let lastAutoAddedAt = 0;
+
+const SIGN_RECORDING_SECONDS = 4;
+const AUTO_SIGN_CONFIDENCE = 0.60;
+const AUTO_DUPLICATE_COOLDOWN_MS = 2500;
+
+let chatHistory = [];
+let lastRecognition = null;
+let selectedMode = "ISL";
+let sentenceParts = [];
+let translationHistory = [];
+
+const GESTURE_THRESHOLD = 0.65;
+const MAX_FRAMES = 60;
+
+const modeDescriptions = {
+    ISL:"Indian Sign Language selected. Recognition uses the experimental OpenHands INCLUDE model.",
+    ASL:"American Sign Language selected. No ASL recognition model is currently connected.",
+    BSL:"British Sign Language selected. No BSL recognition model is currently connected.",
+    CSL:"Chinese Sign Language selected. No CSL recognition model is currently connected.",
+    GENERIC:"Generic finger counting selected. This mode counts 0–10 and does not translate sign-language vocabulary."
+};
+
+const gestureLabels = {
+    Thumb_Up:"Thumbs up 👍",
+    Thumb_Down:"Thumbs down 👎",
+    Open_Palm:"Open palm ✋",
+    Pointing_Up:"Pointing up ☝️",
+    Closed_Fist:"Closed fist ✊",
+    Victory:"Victory / Peace ✌️",
+    ILoveYou:"I love you 🤟"
+};
+
+const handConnections = [
+    [0,1],[1,2],[2,3],[3,4],
+    [0,5],[5,6],[6,7],[7,8],
+    [5,9],[9,10],[10,11],[11,12],
+    [9,13],[13,14],[14,15],[15,16],
+    [13,17],[17,18],[18,19],[19,20],
+    [0,17]
+];
+
+const fingertipIndices = [4,8,12,16,20];
+
+/* --------------------------------
+   GENERIC FINGER COUNTING
+-------------------------------- */
+
+let fingerCountHistory = [];
+const FINGER_HISTORY_SIZE = 7;
+
+function landmarkDistance(a,b) {
+    const dx = a.x-b.x;
+    const dy = a.y-b.y;
+    const dz = a.z-b.z;
+    return Math.sqrt(dx*dx+dy*dy+dz*dz);
+}
+
+function jointAngle(a,b,c) {
+    const ba = {x:a.x-b.x,y:a.y-b.y,z:a.z-b.z};
+    const bc = {x:c.x-b.x,y:c.y-b.y,z:c.z-b.z};
+
+    const dot = ba.x*bc.x+ba.y*bc.y+ba.z*bc.z;
+    const magBA = Math.sqrt(ba.x**2+ba.y**2+ba.z**2);
+    const magBC = Math.sqrt(bc.x**2+bc.y**2+bc.z**2);
+
+    if (magBA===0 || magBC===0) return 0;
+
+    const cosine = Math.max(-1,Math.min(1,dot/(magBA*magBC)));
+    return Math.acos(cosine)*(180/Math.PI);
+}
+
+function isFingerExtended(landmarks,mcp,pip,tip) {
+    return jointAngle(
+        landmarks[mcp],
+        landmarks[pip],
+        landmarks[tip]
+    ) > 155;
+}
+
+function isThumbExtended(landmarks) {
+    const thumbAngle = jointAngle(
+        landmarks[1],
+        landmarks[2],
+        landmarks[3]
+    );
+
+    const palmWidth = landmarkDistance(
+        landmarks[5],
+        landmarks[17]
+    );
+
+    const thumbDistance = landmarkDistance(
+        landmarks[4],
+        landmarks[5]
+    );
+
+    if (palmWidth<0.001) return false;
+
+    return thumbAngle>140 && thumbDistance>palmWidth*0.35;
+}
+
+function countFingersOnHand(landmarks) {
+    if (!landmarks || landmarks.length!==21) return 0;
+
+    let count = isThumbExtended(landmarks) ? 1 : 0;
+
+    if (isFingerExtended(landmarks,5,6,8)) count++;
+    if (isFingerExtended(landmarks,9,10,12)) count++;
+    if (isFingerExtended(landmarks,13,14,16)) count++;
+    if (isFingerExtended(landmarks,17,18,20)) count++;
+
+    return count;
+}
+
+function getMedian(values) {
+    if (!values.length) return 0;
+    const sorted = [...values].sort((a,b)=>a-b);
+    return sorted[Math.floor(sorted.length/2)];
+}
+
+function updateFingerCounter(hands,handednesses) {
+    const counter = $("fingerCounter");
+
+    if (selectedMode!=="GENERIC") {
+        counter.classList.add("hidden");
+        return;
+    }
+
+    counter.classList.remove("hidden");
+
+    if (!hands || !hands.length) {
+        fingerCountHistory = [];
+        $("leftFingerCount").textContent = "–";
+        $("rightFingerCount").textContent = "–";
+        $("totalFingerCount").textContent = "–";
+        $("fingerCountMessage").textContent =
+            "No hands detected. Move your hands into the camera view.";
+        return;
+    }
+
+    let leftCount = null;
+    let rightCount = null;
+
+    hands.forEach((landmarks,index)=>{
+        const count = countFingersOnHand(landmarks);
+        const hand = handednesses?.[index]?.[0]?.categoryName;
+
+        if (hand==="Left") leftCount = count;
+        else if (hand==="Right") rightCount = count;
+        else if (leftCount===null) leftCount = count;
+        else rightCount = count;
+    });
+
+    const left = leftCount ?? 0;
+    const right = rightCount ?? 0;
+    const total = Math.min(10,left+right);
+
+    fingerCountHistory.push(total);
+    if (fingerCountHistory.length>FINGER_HISTORY_SIZE) {
+        fingerCountHistory.shift();
+    }
+
+    const stableTotal = getMedian(fingerCountHistory);
+
+    $("leftFingerCount").textContent = leftCount===null ? "–" : left;
+    $("rightFingerCount").textContent = rightCount===null ? "–" : right;
+    $("totalFingerCount").textContent = stableTotal;
+
+    $("fingerCountMessage").textContent =
+        (hands.length===1
+            ? "One hand detected. Keep your fingers spread and visible."
+            : "Both hands detected. Counting extended fingers across both hands.") +
+        " Current count: " + stableTotal + ".";
+}
+
+/* --------------------------------
+   GENERAL HELPERS
+-------------------------------- */
+
+function addBubble(text,who="") {
+    const element = document.createElement("div");
+    element.className = "bubble "+who;
+    element.textContent = text;
+    $("chatlog").append(element);
+    $("chatlog").scrollTop = $("chatlog").scrollHeight;
+}
+
+function cleanSignLabel(label) {
+    return String(label||"").replace(/^\d+\./,"").trim();
+}
+
+function setSentenceText() {
+    $("sentenceText").textContent =
+        sentenceParts.length
+            ? sentenceParts.join(" ")
+            : "Your translated sentence will appear here.";
+}
+
+function selectMode(mode) {
+    selectedMode = mode;
+
+    document.querySelectorAll(".mode").forEach(button=>{
+        button.classList.toggle("active",button.dataset.mode===mode);
+    });
+
+    $("modeLabel").textContent =
+        mode==="GENERIC" ? "Finger counting selected" : mode+" selected";
+
+    $("modeDescription").textContent = modeDescriptions[mode];
+
+    $("fingerCounter").classList.toggle("hidden",mode!=="GENERIC");
+    fingerCountHistory = [];
+
+    $("leftFingerCount").textContent = "–";
+    $("rightFingerCount").textContent = "–";
+    $("totalFingerCount").textContent = "–";
+    $("fingerCountMessage").textContent =
+        "Show one or both hands to the camera.";
+
+    lastRecognition = null;
+    $("explain").disabled = true;
+    $("addSentence").disabled = true;
+
+    $("liveTranslation").textContent = "Waiting for signs...";
+    $("translationMeta").textContent = "No recognition result yet.";
+    $("detailedTranslation").textContent =
+        "AI explanation: No translation selected.";
+
+    $("recognitionNotice").textContent =
+        mode==="ISL"
+            ? "OpenHands INCLUDE supports experimental ISL isolated-sign recognition only. Predictions may be incorrect."
+            : mode==="GENERIC"
+                ? "Generic finger counting is a separate task. It counts extended fingers and does not translate sign-language vocabulary."
+                : "This sign language requires its own compatible trained recognition model. The installed OpenHands checkpoint supports ISL only.";
+
+    frames = [];
+}
+
+document.querySelectorAll(".mode").forEach(button=>{
+    button.addEventListener("click",()=>{
+        if (continuousEnabled) stopContinuousRecognition();
+        selectMode(button.dataset.mode);
+    });
+});
+
+/* --------------------------------
+   BACKEND HEALTH
+-------------------------------- */
+
+async function health() {
+    try {
+        const response = await fetch("/api/health");
+        if (!response.ok) throw new Error("Health check failed");
+
+        const data = await response.json();
+
+        $("healthDot").style.background =
+            data.status==="ok" ? "var(--green)" : "var(--warning)";
+
+        $("healthText").textContent =
+            data.status==="ok" ? "Backend online" : "Backend issue";
+
+        const available =
+            data.local_recognition_available ??
+            data.recognition_model_configured ??
+            false;
+
+        $("recognitionStatus").replaceChildren();
+
+        const title = document.createElement("strong");
+        title.textContent = "Sign recognition: ";
+
+        const detail = document.createElement("span");
+        detail.textContent = available
+            ? "OpenHands INCLUDE ISL model files detected locally. Experimental isolated-sign recognition."
+            : "Local OpenHands model files not detected.";
+
+        $("recognitionStatus").append(title,detail);
+
+        $("assistantStatus").replaceChildren();
+
+        const assistantTitle = document.createElement("strong");
+        assistantTitle.textContent = "AI assistant: ";
+
+        const assistantDetail = document.createElement("span");
+        assistantDetail.textContent = data.assistant_configured
+            ? "Ollama assistant configured."
+            : "Assistant configuration not confirmed.";
+
+        $("assistantStatus").append(assistantTitle,assistantDetail);
+
+    } catch(error) {
+        $("healthDot").style.background = "var(--danger)";
+        $("healthText").textContent = "Backend unavailable";
+        $("recognitionStatus").textContent =
+            "Sign recognition: Backend unavailable";
+        $("assistantStatus").textContent =
+            "AI assistant: Backend unavailable";
+    }
+}
+
+health();
+
+/* --------------------------------
+   MEDIAPIPE TRACKER
+-------------------------------- */
+
+async function setupTracker() {
+    if (landmarker) return;
+
+    const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+    );
+
+    landmarker = await GestureRecognizer.createFromOptions(vision,{
+        baseOptions:{
+            modelAssetPath:
+                "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task"
+        },
+        runningMode:"VIDEO",
+        numHands:2,
+        minHandDetectionConfidence:0.55,
+        minHandPresenceConfidence:0.55,
+        minTrackingConfidence:0.55
+    });
+}
+
+function drawHandLandmarks(allHands) {
+    const canvas = $("handCanvas");
+    const video = $("video");
+    const ctx = canvas.getContext("2d");
+
+    if (!video.videoWidth || !video.videoHeight) return;
+
+    if (canvas.width!==video.videoWidth ||
+        canvas.height!==video.videoHeight) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+    }
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const colors = ["#6ee7df","#ffd18a"];
+
+    allHands.forEach((landmarks,handIndex)=>{
+        const color = colors[handIndex%colors.length];
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = Math.max(2,canvas.width/250);
+
+        handConnections.forEach(([start,end])=>{
+            const a = landmarks[start];
+            const b = landmarks[end];
+            ctx.beginPath();
+            ctx.moveTo(a.x*canvas.width,a.y*canvas.height);
+            ctx.lineTo(b.x*canvas.width,b.y*canvas.height);
+            ctx.stroke();
+        });
+
+        landmarks.forEach((point,index)=>{
+            ctx.beginPath();
+            ctx.arc(
+                point.x*canvas.width,
+                point.y*canvas.height,
+                fingertipIndices.includes(index)?5:3,
+                0,Math.PI*2
+            );
+            ctx.fill();
+        });
+    });
+}
+
+function clearHandOverlay() {
+    const canvas = $("handCanvas");
+    canvas.getContext("2d").clearRect(0,0,canvas.width,canvas.height);
+}
+
+function showRecognisedGestures(result) {
+    const gestures = result.gestures || [];
+
+    const recognised = gestures.map((categories,index)=>{
+        const top = categories?.[0];
+
+        if (!top || top.categoryName==="None" ||
+            top.score<GESTURE_THRESHOLD) return null;
+
+        const name = gestureLabels[top.categoryName] || top.categoryName;
+        const confidence = Math.round(top.score*100);
+        const handedness =
+            result.handednesses?.[index]?.[0]?.categoryName || "";
+
+        return `${name} (${handedness} hand) — ${confidence}% confidence`;
+    }).filter(Boolean);
+
+    $("gestureResult").textContent =
+        "Everyday gesture: "+
+        (recognised.length?recognised.join(" · "):"No clear gesture detected");
+}
+
+/* --------------------------------
+   CAMERA
+-------------------------------- */
+
+$("start").onclick = async()=>{
+    try {
+        $("start").disabled = true;
+        $("tracking").textContent = "Loading hand tracker...";
+
+        await setupTracker();
+
+        stream = await navigator.mediaDevices.getUserMedia({
+            video:{
+                facingMode:"user",
+                width:{ideal:960},
+                height:{ideal:720}
+            },
+            audio:false
+        });
+
+        $("video").srcObject = stream;
+        await $("video").play();
+
+        $("placeholder").hidden = true;
+        $("stop").disabled = false;
+        $("cameraStatus").textContent = "Camera: Active";
+
+        frames = [];
+        lastVideoTime = -1;
+        $("tracking").textContent = "Hand tracking: Camera active";
+
+        loop();
+
+    } catch(error) {
+        if (stream) stream.getTracks().forEach(track=>track.stop());
+
+        stream = null;
+        $("video").srcObject = null;
+        $("start").disabled = false;
+
+        $("tracking").textContent =
+            "Could not start camera: "+error.message;
+
+        $("cameraStatus").textContent = "Camera: Unavailable";
+    }
+};
+
+function loop() {
+    const video = $("video");
+
+    if (video.readyState>=2 && video.currentTime!==lastVideoTime) {
+        lastVideoTime = video.currentTime;
+
+        const result = landmarker.recognizeForVideo(
+            video,
+            performance.now()
+        );
+
+        const hands = result.landmarks || [];
+
+        drawHandLandmarks(hands);
+        showRecognisedGestures(result);
+
+        updateFingerCounter(hands,result.handednesses);
+
+        $("tracking").textContent =
+            "Hand tracking: "+hands.length+" hand(s) detected";
+
+        if (hands.length) {
+            frames.push({
+                t:Date.now(),
+                hands:hands.map((hand,index)=>({
+                    handedness:
+                        result.handednesses?.[index]?.[0]?.categoryName || "unknown",
+                    landmarks:hand.map(point=>[
+                        +point.x.toFixed(4),
+                        +point.y.toFixed(4),
+                        +point.z.toFixed(4)
+                    ])
+                }))
+            });
+
+            if (frames.length>MAX_FRAMES) frames.shift();
+        }
+    }
+
+    if (stream && stream.active) {
+        raf = requestAnimationFrame(loop);
+    }
+}
+
+$("stop").onclick = stopCamera;
+
+function stopCamera() {
+    stopContinuousRecognition();
+
+    if (mediaRecorder && mediaRecorder.state!=="inactive") {
+        try { mediaRecorder.stop(); } catch(error) {}
+    }
+
+    isRecordingSign = false;
+    recordedChunks = [];
+    mediaRecorder = null;
+
+    cancelAnimationFrame(raf);
+
+    if (stream) {
+        stream.getTracks().forEach(track=>track.stop());
+    }
+
+    stream = null;
+    $("video").srcObject = null;
+
+    clearHandOverlay();
+    fingerCountHistory = [];
+
+    $("leftFingerCount").textContent = "–";
+    $("rightFingerCount").textContent = "–";
+    $("totalFingerCount").textContent = "–";
+    $("fingerCountMessage").textContent = "Camera stopped.";
+
+    $("placeholder").hidden = false;
+    $("start").disabled = false;
+    $("stop").disabled = true;
+
+    $("cameraStatus").textContent = "Camera: Stopped";
+    $("tracking").textContent = "Hand tracking: Stopped";
+    $("gestureResult").textContent = "Everyday gesture: Camera stopped";
+}
+
+/* --------------------------------
+   SENTENCE BUILDER
+-------------------------------- */
+
+function addAutomaticTranslation(label) {
+    const cleanLabel = cleanSignLabel(label);
+    if (!cleanLabel) return null;
+
+    const now = Date.now();
+
+    if (
+        cleanLabel===lastAutoAddedLabel &&
+        now-lastAutoAddedAt<AUTO_DUPLICATE_COOLDOWN_MS
+    ) {
+        return null;
+    }
+
+    const sentenceIndex = sentenceParts.length;
+
+    sentenceParts.push(cleanLabel);
+    setSentenceText();
+
+    lastAutoAddedLabel = cleanLabel;
+    lastAutoAddedAt = now;
+
+    return sentenceIndex;
+}
+
+function addToSentence(index) {
+    const item = translationHistory[index];
+    if (!item) return;
+
+    sentenceParts.push(
+        item.displayText || cleanSignLabel(item.text)
+    );
+
+    setSentenceText();
+}
+
+function renderHistory() {
+    const list = $("historyList");
+    list.replaceChildren();
+
+    if (!translationHistory.length) {
+        list.textContent = "No translations yet.";
+        return;
+    }
+
+    translationHistory.forEach((item,index)=>{
+        const row = document.createElement("div");
+        row.className = "history-item";
+
+        const label = document.createElement("div");
+        label.className = "history-item-label";
+        label.textContent =
+            `${item.language}: ${item.displayText || cleanSignLabel(item.text)} · ${item.time}`;
+
+        const correctionRow = document.createElement("div");
+        correctionRow.className = "history-correction";
+
+        const correctionInput = document.createElement("input");
+        correctionInput.type = "text";
+        correctionInput.placeholder = "Correct this sign...";
+        correctionInput.value =
+            item.displayText || cleanSignLabel(item.text);
+        correctionInput.maxLength = 100;
+        correctionInput.setAttribute(
+            "aria-label",
+            "Correct recognised sign"
+        );
+
+        const correctButton = document.createElement("button");
+        correctButton.type = "button";
+        correctButton.textContent = "Correct";
+        correctButton.className = "btn secondary small-btn";
+
+        correctButton.onclick = ()=>{
+            const corrected = correctionInput.value.trim();
+
+            if (!corrected) {
+                correctionInput.focus();
+                return;
+            }
+
+            const oldLabel =
+                item.displayText || cleanSignLabel(item.text);
+
+            item.correctedText = corrected;
+            item.displayText = corrected;
+
+            if (
+                Number.isInteger(item.sentenceIndex) &&
+                item.sentenceIndex>=0 &&
+                item.sentenceIndex<sentenceParts.length &&
+                sentenceParts[item.sentenceIndex]===oldLabel
+            ) {
+                sentenceParts[item.sentenceIndex] = corrected;
+                setSentenceText();
+            }
+
+            if (
+                index===0 &&
+                lastRecognition &&
+                lastRecognition.translation===item.text
+            ) {
+                lastRecognition.correctedTranslation = corrected;
+            }
+
+            renderHistory();
+        };
+
+        const addButton = document.createElement("button");
+        addButton.type = "button";
+        addButton.textContent = "Add";
+        addButton.className = "btn secondary small-btn";
+        addButton.onclick = ()=>addToSentence(index);
+
+        correctionRow.append(
+            correctionInput,
+            correctButton,
+            addButton
+        );
+
+        row.append(label,correctionRow);
+        list.append(row);
+    });
+}
+
+/* --------------------------------
+   OPENHANDS VIDEO RECOGNITION
+-------------------------------- */
+
+async function recognizeOneWindow(runId) {
+    if (
+        !continuousEnabled ||
+        runId!==continuousRunId ||
+        !stream ||
+        !stream.active
+    ) return;
+
+    if (selectedMode!=="ISL") {
+        $("liveTranslation").textContent =
+            "OpenHands currently supports ISL only.";
+        continuousEnabled = false;
+        return;
+    }
+
+    if (!window.MediaRecorder) {
+        throw new Error("Video recording is not supported by this browser.");
+    }
+
+    if (isRecordingSign) return;
+
+    isRecordingSign = true;
+    recordedChunks = [];
+
+    const mimeTypes = [
+        "video/webm;codecs=vp8",
+        "video/webm"
+    ];
+
+    const mimeType = mimeTypes.find(type=>
+        MediaRecorder.isTypeSupported(type)
+    );
+
+    if (!mimeType) {
+        isRecordingSign = false;
+        throw new Error("No supported WebM recording format was found.");
+    }
+
+    const recorder = new MediaRecorder(stream,{mimeType});
+    mediaRecorder = recorder;
+
+    recorder.ondataavailable = event=>{
+        if (event.data && event.data.size>0) {
+            recordedChunks.push(event.data);
+        }
+    };
+
+    const recordingFinished = new Promise((resolve,reject)=>{
+        recorder.onstop = resolve;
+        recorder.onerror = ()=>reject(
+            new Error("Camera recording failed.")
+        );
+    });
+
+    $("recognize").textContent = "Recording sign...";
+    $("liveTranslation").textContent =
+        "Listening for your next sign...";
+
+    recorder.start(250);
+
+    await new Promise(resolve=>
+        setTimeout(resolve,SIGN_RECORDING_SECONDS*1000)
+    );
+
+    if (recorder.state!=="inactive") {
+        recorder.stop();
+    }
+
+    await recordingFinished;
+
+    if (
+        !continuousEnabled ||
+        runId!==continuousRunId ||
+        !stream ||
+        !stream.active
+    ) {
+        isRecordingSign = false;
+        return;
+    }
+
+    const videoBlob = new Blob(recordedChunks,{type:mimeType});
+    isRecordingSign = false;
+
+    if (!videoBlob.size) {
+        throw new Error("The recorded video is empty.");
+    }
+
+    $("recognize").textContent = "Processing sign...";
+    $("translationMeta").textContent =
+        "Processing your latest "+SIGN_RECORDING_SECONDS+
+        "-second recording locally.";
+
+    const formData = new FormData();
+    formData.append("file",videoBlob,"sign-recording.webm");
+    formData.append("language","ISL");
+
+    const response = await fetch("/api/predict",{
+        method:"POST",
+        body:formData
+    });
+
+    const data = await response.json();
+
+    if (
+        !continuousEnabled ||
+        runId!==continuousRunId
+    ) return;
+
+    if (!response.ok) {
+        throw new Error(data.detail || "Local recognition failed.");
+    }
+
+    if (!data.translation) {
+        throw new Error("No sign prediction was returned.");
+    }
+
+    const predictions = Array.isArray(data.predictions)
+        ? data.predictions
+        : [];
+
+    lastRecognition = {
+        translation:data.translation,
+        confidence:data.confidence,
+        language:"ISL",
+        predictions:predictions
+    };
+
+    const cleanTranslation = cleanSignLabel(data.translation);
+
+    $("liveTranslation").textContent = cleanTranslation;
+
+    const alternatives = predictions.slice(0,5).map((item,index)=>{
+        const percentage = Math.round(
+            Number(item.confidence)*100
+        );
+
+        return `${index+1}. ${cleanSignLabel(item.label)} (${percentage}%)`;
+    });
+
+    $("translationMeta").textContent =
+        "OpenHands INCLUDE · "+data.frames_processed+
+        " frames processed\nTop predictions:\n"+
+        alternatives.join("\n")+
+        "\nConfidence scores are model scores, not verified accuracy.";
+
+    $("explain").disabled = false;
+    $("addSentence").disabled = false;
+
+    const historyItem = {
+        text:data.translation,
+        displayText:cleanTranslation,
+        language:"ISL",
+        time:new Date().toLocaleTimeString(),
+        sentenceIndex:null
+    };
+
+    translationHistory.unshift(historyItem);
+    translationHistory = translationHistory.slice(0,20);
+
+    const confidence = Number(data.confidence);
+
+    if (confidence>=AUTO_SIGN_CONFIDENCE) {
+        historyItem.sentenceIndex =
+            addAutomaticTranslation(data.translation);
+    } else {
+        $("translationMeta").textContent +=
+            "\nPrediction not automatically added because confidence was below "+
+            Math.round(AUTO_SIGN_CONFIDENCE*100)+"%.";
+    }
+
+    renderHistory();
+}
+
+async function continuousRecognitionLoop(runId) {
+    while (
+        continuousEnabled &&
+        runId===continuousRunId &&
+        stream &&
+        stream.active
+    ) {
+        try {
+            await recognizeOneWindow(runId);
+        } catch(error) {
+            console.error("Continuous recognition error:",error);
+
+            $("liveTranslation").textContent =
+                "Recognition error: "+error.message;
+
+            $("translationMeta").textContent =
+                "Continuous recognition stopped. Check the server terminal.";
+
+            continuousEnabled = false;
+            break;
+        }
+
+        if (
+            !continuousEnabled ||
+            runId!==continuousRunId ||
+            !stream ||
+            !stream.active
+        ) {
+            break;
+        }
+
+        $("recognize").textContent =
+            "Stop continuous translation";
+
+        await new Promise(resolve=>setTimeout(resolve,300));
+    }
+
+    if (runId===continuousRunId) {
+        continuousEnabled = false;
+        isRecordingSign = false;
+        recordedChunks = [];
+        mediaRecorder = null;
+
+        $("recognize").textContent =
+            "Start continuous translation";
+    }
+}
+
+function stopContinuousRecognition() {
+    continuousEnabled = false;
+    continuousRunId++;
+
+    if (
+        mediaRecorder &&
+        mediaRecorder.state!=="inactive"
+    ) {
+        try {
+            mediaRecorder.stop();
+        } catch(error) {
+            console.warn("Recorder stop:",error);
+        }
+    }
+
+    $("recognize").textContent =
+        "Start continuous translation";
+}
+
+function recognizeSigns() {
+    if (continuousEnabled) {
+        stopContinuousRecognition();
+
+        $("liveTranslation").textContent =
+            "Continuous translation stopped.";
+
+        return;
+    }
+
+    if (selectedMode!=="ISL") {
+        $("liveTranslation").textContent =
+            "Please select ISL. The installed OpenHands model supports ISL only.";
+        return;
+    }
+
+    if (!stream || !stream.active) {
+        $("liveTranslation").textContent =
+            "Start your camera before translating.";
+        return;
+    }
+
+    if (!window.MediaRecorder) {
+        $("liveTranslation").textContent =
+            "Video recording is not supported by this browser.";
+        return;
+    }
+
+    continuousRunId++;
+    const thisRunId = continuousRunId;
+
+    continuousEnabled = true;
+    lastAutoAddedLabel = "";
+    lastAutoAddedAt = 0;
+
+    $("explain").disabled = true;
+    $("addSentence").disabled = true;
+
+    $("recognize").textContent =
+        "Stop continuous translation";
+
+    $("liveTranslation").textContent =
+        "Continuous ISL recognition started. Show one sign at a time.";
+
+    $("translationMeta").textContent =
+        "Capturing successive "+SIGN_RECORDING_SECONDS+
+        "-second clips. Each clip is processed locally before the next.";
+
+    continuousRecognitionLoop(thisRunId);
+}
+
+$("recognize").onclick = recognizeSigns;
+
+/* --------------------------------
+   SENTENCE BUTTONS
+-------------------------------- */
+
+$("addSentence").onclick = ()=>{
+    if (!lastRecognition?.translation) return;
+
+    const label = cleanSignLabel(
+        lastRecognition.correctedTranslation ||
+        lastRecognition.translation
+    );
+
+    if (label) {
+        sentenceParts.push(label);
+        setSentenceText();
+    }
+};
+
+$("clearSentence").onclick = ()=>{
+    sentenceParts = [];
+
+    translationHistory.forEach(item=>{
+        item.sentenceIndex = null;
+    });
+
+    setSentenceText();
+};
+
+$("clearHistory").onclick = ()=>{
+    translationHistory = [];
+    renderHistory();
+};
+
+$("copySentence").onclick = async()=>{
+    const text = sentenceParts.join(" ");
+    if (!text) return;
+
+    try {
+        await navigator.clipboard.writeText(text);
+        $("copySentence").textContent = "Copied!";
+
+        setTimeout(()=>{
+            $("copySentence").textContent = "Copy sentence";
+        },1500);
+
+    } catch(error) {
+        $("copySentence").textContent = "Copy unavailable";
+    }
+};
+
+/* --------------------------------
+   EXPLAIN RECOGNITION
+-------------------------------- */
+
+async function explainTranslation() {
+    if (!lastRecognition) return;
+
+    $("explain").disabled = true;
+    $("explain").textContent = "Explaining...";
+
+    const message =
+        "Explain this actual recognition result in plain English: "+
+        (lastRecognition.correctedTranslation ||
+         lastRecognition.translation)+
+        ". Selected sign language: "+lastRecognition.language+
+        ". Do not invent additional signs or meanings.";
+
+    try {
+        const response = await fetch("/api/chat",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                message,
+                language:"English",
+                sign_language:lastRecognition.language,
+                history:chatHistory.slice(-20),
+                recognition:lastRecognition,
+                camera_context:{active:!!stream},
+                website_context:
+                    "Explain only the supplied recognition result. Do not claim that camera landmarks alone are translated signs.",
+                user_preferences:{}
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || "Explanation unavailable");
+        }
+
+        $("detailedTranslation").textContent =
+            "AI explanation: "+data.reply;
+
+        addBubble("Explanation: "+data.reply);
+
+    } catch(error) {
+        $("detailedTranslation").textContent =
+            "AI explanation unavailable: "+error.message;
+    } finally {
+        $("explain").disabled = false;
+        $("explain").textContent = "Explain translation";
+    }
+}
+
+$("explain").onclick = explainTranslation;
+
+/* --------------------------------
+   FLOATING AI ASSISTANT
+-------------------------------- */
+
+async function send() {
+    const message = $("message").value.trim();
+    if (!message) return;
+
+    $("message").value = "";
+    addBubble(message,"user");
+    $("send").disabled = true;
+
+    try {
+        const response = await fetch("/api/chat",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                message,
+                language:"English",
+                sign_language:selectedMode,
+                history:chatHistory.slice(-20),
+                recognition:lastRecognition,
+                camera_context:{active:!!stream},
+                website_context:
+                    "SignBridge supports browser-based hand tracking, everyday gesture recognition, experimental OpenHands INCLUDE ISL isolated-sign recognition, and generic finger counting. ASL, BSL and CSL models are not connected. Do not claim hand tracking alone translates sign language.",
+                user_preferences:{
+                    selected_sign_language:selectedMode
+                }
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || "Assistant unavailable");
+        }
+
+        addBubble(data.reply);
+
+        chatHistory.push({role:"user",content:message});
+        chatHistory.push({role:"assistant",content:data.reply});
+        chatHistory = chatHistory.slice(-20);
+
+    } catch(error) {
+        addBubble("Assistant unavailable: "+error.message);
+    } finally {
+        $("send").disabled = false;
+        $("message").focus();
+    }
+}
+
+$("send").onclick = send;
+
+$("assistantBubble").onclick = ()=>{
+    $("assistantPanel").hidden = false;
+    $("assistantBubble").hidden = true;
+    $("assistantBubble").setAttribute("aria-expanded","true");
+    $("message").focus();
+};
+
+$("assistantMinimize").onclick = ()=>{
+    $("assistantPanel").hidden = true;
+    $("assistantBubble").hidden = false;
+    $("assistantBubble").setAttribute("aria-expanded","false");
+};
+
+$("message").onkeydown = event=>{
+    if (event.key==="Enter") send();
+};
+
+/* --------------------------------
+   PAGE CLEANUP
+-------------------------------- */
+
+window.addEventListener("pagehide",()=>{
+    stopContinuousRecognition();
+    cancelAnimationFrame(raf);
+
+    if (stream) {
+        stream.getTracks().forEach(track=>track.stop());
+    }
+});
+</script>
+
+</body>
+</html>
