@@ -924,7 +924,7 @@ async function health() {
 
         const detail = document.createElement("span");
         detail.textContent = available
-            ? "OpenHands INCLUDE ISL model files detected locally. Experimental isolated-sign recognition."
+            ? "OpenHands INCLUDE ISL model files detected on the recognition backend. Experimental isolated-sign recognition."
             : "Local OpenHands model files not detected.";
 
         $("recognitionStatus").append(title,detail);
