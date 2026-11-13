@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b1220">
+<meta name="theme-color" content="#f3f2ff">
 <title>SignBridge — Communication without barriers</title>
 
 <style>
@@ -198,29 +198,37 @@ textarea {resize:vertical;min-height:85px}
 
 #assistantWidget {
     position:fixed;
-    right:22px;
-    bottom:22px;
+    right:clamp(12px,2.2vw,28px);
+    bottom:clamp(12px,2.2vw,28px);
     z-index:9999;
+    width:auto;
+    max-width:calc(100vw - 24px);
 }
 .assistant-bubble {
-    width:62px;
-    height:62px;
+    width:clamp(56px,4.2vw,66px);
+    height:clamp(56px,4.2vw,66px);
+    min-width:56px;
+    min-height:56px;
     border-radius:50%;
     border:none;
     background:#176b78;
     color:white;
-    font-size:28px;
+    font-size:clamp(24px,1.8vw,28px);
     cursor:pointer;
     box-shadow:0 5px 22px #0006;
     display:grid;
     place-items:center;
+    flex:0 0 auto;
 }
 .assistant-bubble:hover {transform:scale(1.06)}
 .assistant-bubble[hidden] {display:none!important}
 .assistant-panel {
-    width:360px;
+    width:min(360px,calc(100vw - 24px));
     max-width:calc(100vw - 24px);
-    height:min(500px,calc(100vh - 110px));
+    height:min(500px,calc(100dvh - 100px));
+    max-height:calc(100dvh - 24px);
+    min-height:0;
+    box-sizing:border-box;
     background:var(--panel);
     border:1px solid var(--line);
     border-radius:16px;
@@ -229,11 +237,13 @@ textarea {resize:vertical;min-height:85px}
     display:flex;
     flex-direction:column;
     margin-bottom:12px;
+    overflow:hidden;
 }
 .assistant-panel[hidden] {display:none!important}
 .assistant-header {
     max-width:none;
     width:100%;
+    min-width:0;
     margin:0;
     padding:0 0 10px;
     display:flex;
@@ -241,26 +251,48 @@ textarea {resize:vertical;min-height:85px}
     align-items:center;
     gap:10px;
     border-bottom:1px solid var(--line);
-    flex-shrink:0;
+    flex:0 0 auto;
+}
+.assistant-header > div:first-child {
+    min-width:0;
+    overflow:hidden;
+}
+.assistant-header strong,
+.assistant-header .small {
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 .assistant-minimize {
     width:36px;
     height:36px;
+    min-width:36px;
+    min-height:36px;
+    flex:0 0 36px;
     border:1px solid var(--line);
     border-radius:9px;
     background:var(--panel2);
     color:var(--ink);
     font-size:23px;
+    line-height:1;
     cursor:pointer;
 }
 .assistant-panel .chatlog {
-    flex:1;
+    flex:1 1 auto;
     min-height:0;
     height:auto;
     overflow-y:auto;
+    overflow-x:hidden;
 }
-.assistant-panel .chatrow {flex-shrink:0}
-.assistant-panel .chatrow input {min-width:0}
+.assistant-panel .chatrow {
+    flex:0 0 auto;
+    min-width:0;
+}
+.assistant-panel .chatrow input {
+    min-width:0;
+    width:100%;
+}
 @media(max-width:480px) {
     #assistantWidget {right:12px;bottom:12px}
     .assistant-panel {
@@ -338,18 +370,652 @@ footer {
     .two-col,.feature-grid {grid-template-columns:1fr}
     .video-wrap {aspect-ratio:4/3}
 }
+
+/* --------------------------------
+   SIGNBRIDGE PREMIUM VISUAL SYSTEM
+-------------------------------- */
+:root {
+    --bg:#07111d;
+    --panel:rgba(15,29,46,.82);
+    --panel2:#14283d;
+    --line:rgba(142,181,205,.17);
+    --ink:#f3f8fb;
+    --muted:#9fb3c3;
+    --cyan:#71e4d2;
+    --blue:#8ab9ff;
+    --green:#63ddb0;
+}
+body {
+    background:
+      radial-gradient(ellipse at 12% 3%,rgba(46,128,145,.22),transparent 34%),
+      radial-gradient(ellipse at 88% 18%,rgba(61,94,157,.17),transparent 32%),
+      linear-gradient(180deg,#081522 0%,#07111d 55%,#091725 100%);
+    letter-spacing:.005em;
+}
+header {
+    max-width:1400px;
+    padding:22px 34px;
+    border-bottom:1px solid rgba(160,196,215,.10);
+    backdrop-filter:blur(18px);
+}
+.brand {font-size:1.55rem;letter-spacing:-.055em}
+.brand span {color:var(--cyan)}
+nav a {
+    padding:9px 13px;
+    border:1px solid transparent;
+    transition:background .2s ease,border-color .2s ease,color .2s ease;
+}
+nav a:hover {border-color:var(--line);background:rgba(255,255,255,.045)}
+main {max-width:1400px;padding:28px 34px 90px}
+.hero {
+    position:relative;
+    padding:72px 0 62px;
+    max-width:980px;
+}
+.hero:after {
+    content:"";
+    position:absolute;
+    width:270px;height:270px;
+    right:-150px;top:22px;
+    border:1px solid rgba(113,228,210,.12);
+    border-radius:50%;
+    box-shadow:0 0 0 28px rgba(113,228,210,.025),0 0 0 58px rgba(113,228,210,.018);
+    pointer-events:none;
+}
+.eyebrow {
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    color:var(--cyan);
+    font-size:.72rem;
+    letter-spacing:.2em;
+}
+.eyebrow:before {
+    content:"";
+    width:23px;height:1px;background:var(--cyan);
+}
+.hero h1 {
+    max-width:900px;
+    font-size:clamp(3rem,7vw,6.1rem);
+    line-height:.99;
+    letter-spacing:-.075em;
+    margin:20px 0 22px;
+    text-wrap:balance;
+}
+.hero p {max-width:690px;font-size:1.08rem;line-height:1.85;color:#adbfce}
+.panel {
+    background:linear-gradient(145deg,rgba(19,39,59,.88),rgba(10,24,39,.91));
+    border:1px solid rgba(151,190,211,.17);
+    border-radius:22px;
+    padding:28px;
+    box-shadow:0 22px 70px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.035);
+    backdrop-filter:blur(18px);
+}
+.section {margin-top:30px}
+.section-heading {margin-bottom:22px}
+.section-heading h2,.panel h2 {font-size:1.18rem;letter-spacing:-.025em}
+.panel h2 {margin-bottom:18px}
+.grid {gap:22px;grid-template-columns:minmax(0,1.42fr) minmax(310px,.78fr)}
+.two-col {gap:20px}
+.mode-grid {gap:14px}
+.mode {
+    min-height:126px;
+    padding:18px;
+    border-radius:16px;
+    background:rgba(5,17,29,.58);
+    border-color:rgba(145,183,205,.16);
+    transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.mode:hover {transform:translateY(-3px);border-color:rgba(113,228,210,.65)}
+.mode.active {
+    border-color:var(--cyan);
+    background:linear-gradient(145deg,rgba(37,105,111,.35),rgba(15,47,62,.62));
+    box-shadow:0 0 0 1px rgba(113,228,210,.12),0 12px 28px rgba(0,0,0,.13);
+}
+.mode-symbol {font-size:1.55rem;margin-bottom:10px}
+.mode strong {font-size:1rem}
+.mode span {line-height:1.5;margin-top:6px}
+.video-wrap {
+    border-radius:18px;
+    border-color:rgba(133,183,202,.22);
+    box-shadow:inset 0 0 45px rgba(0,0,0,.35);
+}
+.controls {gap:11px;margin-top:17px}
+.btn {
+    border-radius:11px;
+    padding:11px 17px;
+    transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;
+}
+.btn:hover:not(:disabled) {transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 8px 22px rgba(0,0,0,.18)}
+.btn.secondary {background:rgba(20,40,61,.9);border-color:rgba(145,183,205,.2)}
+.result {
+    background:rgba(5,17,29,.58);
+    border-color:rgba(145,183,205,.14);
+    border-radius:14px;
+    padding:16px;
+    margin-top:13px;
+    line-height:1.7;
+}
+.field {margin:18px 0}
+select,input,textarea {
+    background:rgba(5,17,29,.72);
+    border-color:rgba(145,183,205,.2);
+    border-radius:11px;
+    padding:12px 14px;
+}
+.feature-grid {gap:16px}
+.feature {
+    padding:22px;
+    min-height:190px;
+    border-radius:16px;
+    background:rgba(5,17,29,.48);
+    border-color:rgba(145,183,205,.15);
+}
+.feature-icon {margin-bottom:12px}
+.feature h3 {margin-bottom:8px}
+.feature p {line-height:1.75}
+.stat {padding:16px;border-radius:14px}
+.history-item {padding:14px;border-radius:13px}
+footer {max-width:1400px;padding:26px 34px 42px;line-height:1.8}
+#assistantWidget {right:28px;bottom:28px}
+.assistant-bubble {
+    width:66px;height:66px;
+    background:linear-gradient(145deg,#2a9d9b,#176b78);
+    box-shadow:0 12px 34px rgba(0,0,0,.36),0 0 0 7px rgba(113,228,210,.08);
+}
+.assistant-panel {
+    border-radius:20px;
+    padding:18px;
+    background:rgba(14,31,48,.96);
+    border-color:rgba(145,183,205,.2);
+    box-shadow:0 24px 80px rgba(0,0,0,.45);
+    backdrop-filter:blur(22px);
+}
+.specs-section {padding:12px 0 4px}
+.specs-heading {align-items:flex-end}
+.specs-heading h2 {font-size:1.65rem;margin:8px 0 7px}
+.specs-heading p {margin:0;max-width:650px;line-height:1.75}
+.specs-tag {
+    color:var(--cyan);
+    border:1px solid rgba(113,228,210,.25);
+    background:rgba(113,228,210,.06);
+    padding:7px 11px;
+    border-radius:99px;
+    font-size:.68rem;
+    letter-spacing:.14em;
+    white-space:nowrap;
+}
+.spec-grid {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:16px;
+}
+.spec-card {
+    min-width:0;
+    padding:23px;
+    min-height:225px;
+    border-radius:18px;
+    border:1px solid rgba(145,183,205,.16);
+    background:linear-gradient(155deg,rgba(18,39,59,.84),rgba(9,24,39,.84));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+    transition:transform .2s ease,border-color .2s ease;
+}
+.spec-card:hover {transform:translateY(-4px);border-color:rgba(113,228,210,.42)}
+.spec-index {font-size:.66rem;letter-spacing:.15em;color:#87a3b7}
+.spec-value {
+    margin:20px 0 10px;
+    color:var(--cyan);
+    font-size:2.45rem;
+    line-height:1;
+    font-weight:800;
+    letter-spacing:-.06em;
+}
+.spec-value small {font-size:.9rem;font-weight:650;letter-spacing:0;color:#a9c1cf}
+.spec-card h3 {font-size:1rem;margin:0 0 8px}
+.spec-card p {font-size:.83rem;color:var(--muted);line-height:1.75;margin:0}
+.spec-footnote {
+    margin-top:15px;
+    padding:13px 16px;
+    border-left:2px solid rgba(113,228,210,.65);
+    background:rgba(113,228,210,.045);
+    color:#a9bdca;
+    border-radius:0 10px 10px 0;
+    font-size:.8rem;
+    line-height:1.7;
+}
+@media(max-width:1000px) {
+    .spec-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+    .hero:after {right:-70px;opacity:.55}
+}
+@media(max-width:700px) {
+    header {padding:17px 20px}
+    main {padding:16px 20px 60px}
+    .hero {padding:48px 0 42px}
+    .hero:after {display:none}
+    .panel {padding:21px}
+    .grid {grid-template-columns:1fr}
+    .specs-heading {align-items:flex-start;flex-direction:column}
+    .spec-grid {gap:12px}
+    .spec-card {padding:18px;min-height:215px}
+    footer {padding:22px 20px 34px}
+}
+@media(max-width:480px) {
+    header {gap:12px}
+    .header-right {align-items:flex-start;flex-direction:column;gap:10px}
+    nav {width:100%}
+    nav a {font-size:.76rem;padding:7px 9px}
+    main {padding:10px 14px 45px}
+    .hero h1 {font-size:clamp(2.65rem,14vw,4rem)}
+    .panel {padding:17px;border-radius:17px}
+    .mode-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .mode {padding:14px;min-height:118px}
+    .spec-grid {grid-template-columns:1fr}
+    .spec-card {min-height:0;padding:20px}
+    #assistantWidget {right:14px;bottom:14px}
+}
+
+
+/* SIGNBRIDGE PURPLE / BLUE / WHITE IDENTITY */
+:root {
+  color-scheme: dark;
+  --bg:#080b1c; --panel:#11172f; --panel2:#1b2446; --line:rgba(161,177,255,.18);
+  --ink:#f7f8ff; --muted:#b7c0df; --cyan:#a9baff; --blue:#8196ff;
+  --green:#a9baff; --warning:#ffdca0; --danger:#ff9cae;
+  --violet:#9b83ff; --ice:#e8edff;
+}
+html {scroll-behavior:smooth}
+body {
+  min-height:100vh; overflow-x:hidden;
+  background:radial-gradient(ellipse at 12% 3%,rgba(93,104,219,.24),transparent 38%),radial-gradient(ellipse at 90% 22%,rgba(76,126,255,.15),transparent 34%),#080b1c;
+}
+body:before {content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.24;background-image:radial-gradient(rgba(202,212,255,.36) .7px,transparent .7px);background-size:34px 34px;mask-image:linear-gradient(to bottom,black,transparent 80%)}
+.app-shell {opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform 1s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+body.app-ready .app-shell {opacity:1;transform:translateY(0);visibility:visible}
+header {max-width:1320px;padding:24px 34px 18px}
+.brand {font-size:1.55rem;letter-spacing:-.055em;color:#fff}
+.brand span,.loader-wordmark span {background:linear-gradient(100deg,#aabaff,#8c9cff 55%,#e6ecff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.header-right {gap:26px}
+.primary-nav {display:flex;gap:8px;align-items:center;padding:6px;border:1px solid rgba(175,187,255,.14);border-radius:16px;background:rgba(16,22,48,.64);backdrop-filter:blur(18px)}
+.nav-tab {border:0;background:transparent;color:#aeb8dc;padding:10px 17px;border-radius:11px;font-size:.88rem;transition:all .25s ease;white-space:nowrap}
+.nav-tab:hover {color:#fff;background:rgba(145,159,255,.12)}
+.nav-tab.active {color:#fff;background:linear-gradient(120deg,rgba(114,126,255,.34),rgba(121,161,255,.2));box-shadow:inset 0 0 0 1px rgba(183,196,255,.2),0 5px 22px rgba(85,97,220,.13)}
+.status {font-size:.8rem}
+main {max-width:1320px;padding:26px 34px 90px;min-height:70vh}
+.tab-page {display:none;animation:tabReveal .55s cubic-bezier(.2,.8,.2,1) both}
+.tab-page.active {display:block}
+@keyframes tabReveal {from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.hero {min-height:64vh;display:flex;flex-direction:column;justify-content:center;padding:76px 7% 84px;position:relative;isolation:isolate}
+.hero:before {content:"";position:absolute;width:440px;height:440px;right:5%;top:5%;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(111,126,255,.2),rgba(111,126,255,.035) 58%,transparent 70%);filter:blur(2px);animation:heroFloat 9s ease-in-out infinite}
+.hero:after {content:"";position:absolute;width:260px;height:260px;right:13%;top:18%;border:1px solid rgba(172,185,255,.13);border-radius:50%;z-index:-1;animation:slowSpin 28s linear infinite}
+@keyframes heroFloat {50%{transform:translate3d(-15px,18px,0) scale(1.05)}}
+@keyframes slowSpin {to{transform:rotate(360deg)}}
+.eyebrow {color:#aebaff;letter-spacing:.2em}
+.hero h1 {max-width:780px;font-size:clamp(3rem,7vw,5.6rem);line-height:1.02;margin:18px 0 20px;text-wrap:balance}
+.hero p {max-width:620px;color:#b9c3e3;font-size:1.12rem;line-height:1.9}
+.controls {gap:12px}
+.btn {border:1px solid rgba(198,207,255,.2);background:linear-gradient(115deg,#7183ff,#8170e9);box-shadow:0 9px 26px rgba(91,103,224,.2);border-radius:12px;padding:12px 19px;color:#fff;transition:transform .22s,box-shadow .22s,filter .22s}
+.btn:hover {transform:translateY(-2px);box-shadow:0 13px 32px rgba(91,103,224,.3);filter:brightness(1.08)}
+.btn.secondary {background:rgba(144,158,255,.08);border-color:rgba(173,187,255,.22);box-shadow:none;color:#e5eaff}
+.panel,.result,.spec-card {background:linear-gradient(145deg,rgba(22,29,61,.9),rgba(14,19,42,.88));border-color:rgba(164,179,255,.15);box-shadow:0 18px 55px rgba(0,0,0,.13)}
+.panel {border-radius:23px;padding:27px}
+.section {margin-top:28px}
+.page-intro {padding:24px 0 22px;max-width:760px}
+.page-intro h1 {font-size:clamp(2.5rem,5vw,3.7rem);letter-spacing:-.055em;margin:8px 0}
+.page-intro p {color:var(--muted);margin:0}
+.translator-page {max-width:1120px;margin:0 auto}
+.translator-page #translate {padding:23px 26px;margin-top:8px}
+.translator-page .mode-grid {gap:12px}
+.translator-page .grid {gap:20px;align-items:start}
+.translator-page .grid > .panel {padding:22px}
+.translator-page .video-wrap {border-radius:17px;overflow:hidden;border:1px solid rgba(164,179,255,.18)}
+.translator-page .result {border-radius:14px;padding:15px}
+.mode {border:1px solid rgba(160,175,255,.17);background:rgba(113,127,218,.075);border-radius:15px;transition:.22s}
+.mode:hover,.mode.active {border-color:rgba(165,180,255,.55);background:rgba(122,137,255,.17);transform:translateY(-2px)}
+.mode.active {box-shadow:0 0 0 1px rgba(165,180,255,.12),0 10px 28px rgba(83,95,207,.13)}
+#fingerCounter {background:rgba(95,110,210,.12)!important}
+.translation-text {color:#f2f4ff}
+.spec-card {border-radius:21px;padding:28px;min-height:230px}
+.spec-value {color:#dfe5ff}
+.spec-index,.spec-tag {color:#aebaff}
+.feature {border-color:rgba(164,179,255,.15);background:rgba(132,146,255,.07);border-radius:17px;padding:20px}
+footer {color:#aab5d8;border-top:1px solid rgba(164,179,255,.12);padding:28px 24px 40px;text-align:center}
+#assistantWidget .assistant-panel {border:1px solid rgba(164,179,255,.25);background:#11172f;box-shadow:0 20px 65px rgba(0,0,0,.38)}
+#assistantWidget .assistant-bubble {background:linear-gradient(130deg,#7183ff,#8c70ec);box-shadow:0 10px 35px rgba(91,103,224,.35)}
+/* Five-second animated opening */
+.intro-loader {position:fixed;inset:0;z-index:99999;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#20275a 0%,#111738 38%,#080b1c 78%);transition:transform 1.15s cubic-bezier(.76,0,.24,1),opacity .85s ease;}
+.intro-loader.exit {transform:translateY(110%);opacity:1}
+.loader-content {position:relative;z-index:2;display:flex;align-items:center;flex-direction:column;gap:12px;animation:logoArrival 1.15s cubic-bezier(.16,1,.3,1) both}
+@keyframes logoArrival {from{opacity:0;transform:translateY(20px) scale(.92);filter:blur(8px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+.logo-mark {width:112px;height:112px;filter:drop-shadow(0 0 25px rgba(131,147,255,.42));animation:logoHover 3.6s ease-in-out infinite}
+.logo-mark svg {width:100%;height:100%;overflow:visible}
+.logo-bridge {stroke-dasharray:150;stroke-dashoffset:150;animation:drawBridge 1.5s .3s ease forwards}
+.logo-deck {stroke-dasharray:110;stroke-dashoffset:110;animation:drawBridge 1s .8s ease forwards}
+.logo-hand {stroke-dasharray:180;stroke-dashoffset:180;animation:drawBridge 1.5s .7s ease forwards}
+.logo-spark {transform-origin:91px 29px;animation:sparkPulse 1.8s 1.4s ease-in-out infinite}
+@keyframes drawBridge {to{stroke-dashoffset:0}}
+@keyframes logoHover {50%{transform:translateY(-7px) rotate(2deg)}}
+@keyframes sparkPulse {50%{opacity:.3;transform:scale(.65)}}
+.loader-wordmark {font-size:2.15rem;font-weight:850;letter-spacing:-.06em;color:#fff}
+.loader-caption {font-size:.65rem;letter-spacing:.23em;color:#b8c4ef}
+.loader-track {width:190px;height:3px;border-radius:9px;background:rgba(208,217,255,.16);overflow:hidden;margin-top:14px}
+.loader-track span {display:block;height:100%;width:0;background:linear-gradient(90deg,#8b83ff,#b7c9ff,#fff);box-shadow:0 0 12px #9caeff;animation:loadProgress 5s linear forwards}
+@keyframes loadProgress {to{width:100%}}
+.loader-status {font-size:.72rem;color:#8996c1;letter-spacing:.04em;animation:statusFade 1.4s ease-in-out infinite alternate}
+@keyframes statusFade {to{opacity:.45}}
+.loader-orbit {position:absolute;border:1px solid rgba(164,179,255,.12);border-radius:50%;width:min(78vw,650px);aspect-ratio:1;animation:slowSpin 35s linear infinite}
+.orbit-one:after,.orbit-two:after {content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:#b9caff;box-shadow:0 0 20px #9caeff;top:16%;left:16%}
+.orbit-two {width:min(58vw,480px);animation-direction:reverse;opacity:.65}
+.orbit-two:after {top:72%;left:88%;width:5px;height:5px}
+@media(max-width:850px) {
+ header {align-items:flex-start;flex-direction:column;padding:19px 22px 12px}
+ .header-right {width:100%;justify-content:space-between;flex-wrap:wrap}
+ .primary-nav {max-width:100%;overflow-x:auto}
+ .nav-tab {padding:9px 12px}
+ main {padding:22px 22px 65px}
+ .hero {min-height:58vh;padding:55px 3%}
+ .hero:before {right:-15%;opacity:.6}
+}
+@media(max-width:540px) {
+ .header-right {align-items:flex-start;flex-direction:column;gap:12px}
+ .primary-nav {width:100%;justify-content:flex-start}
+ .nav-tab {font-size:.79rem;padding:9px 11px}
+ main {padding:15px 14px 55px}
+ .hero {min-height:60vh;padding:48px 4%}
+ .hero h1 {font-size:clamp(2.7rem,13vw,4rem)}
+ .panel {padding:18px;border-radius:18px}
+ .translator-page #translate {padding:17px}
+ .translator-page .grid > .panel {padding:17px}
+ .page-intro {padding:18px 0}
+}
+@media(prefers-reduced-motion:reduce) {
+ *,*:before,*:after {scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+
+/* SIGNBRIDGE V3 — luminous liquid-glass edition */
+:root{
+ color-scheme:light;
+ --bg:#f7f8ff;--panel:rgba(255,255,255,.68);--panel2:rgba(239,241,255,.82);
+ --line:rgba(125,119,226,.20);--ink:#20254a;--muted:#73799d;
+ --cyan:#6275ef;--blue:#718cf7;--green:#269d83;--warning:#a96b1b;--danger:#d85b78;
+}
+html{background:#f7f8ff}
+body{
+ color:var(--ink);
+ background:
+  radial-gradient(ellipse at 8% 8%,rgba(174,169,255,.48),transparent 34%),
+  radial-gradient(ellipse at 92% 20%,rgba(151,204,255,.48),transparent 32%),
+  radial-gradient(ellipse at 50% 95%,rgba(220,207,255,.48),transparent 38%),
+  linear-gradient(135deg,#fbfbff 0%,#f0f2ff 48%,#f7fbff 100%);
+ background-attachment:fixed;
+}
+body:before,body:after{content:"";position:fixed;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(2px)}
+body:before{width:330px;height:330px;left:-110px;top:34%;background:radial-gradient(circle,rgba(145,132,255,.23),transparent 70%);animation:ambientDrift 16s ease-in-out infinite alternate}
+body:after{width:420px;height:420px;right:-150px;bottom:4%;background:radial-gradient(circle,rgba(105,180,255,.22),transparent 70%);animation:ambientDrift 19s ease-in-out infinite alternate-reverse}
+@keyframes ambientDrift{from{transform:translate3d(0,-22px,0) scale(.92)}to{transform:translate3d(35px,30px,0) scale(1.12)}}
+header{max-width:1360px;padding:22px 34px;margin:12px auto 0;border:1px solid rgba(255,255,255,.86);border-radius:24px;background:rgba(255,255,255,.58);backdrop-filter:blur(24px) saturate(165%);-webkit-backdrop-filter:blur(24px) saturate(165%);box-shadow:0 12px 45px rgba(99,102,190,.09),inset 0 1px 0 #fff;position:sticky;top:12px;z-index:50}
+.brand{color:#34366f;letter-spacing:-.055em}.brand span{background:linear-gradient(100deg,#7666e9,#4b9ce9);-webkit-background-clip:text;background-clip:text;color:transparent}
+.header-right{gap:22px}.status{color:#74799a}
+.primary-nav{padding:5px;border:1px solid rgba(125,119,226,.12);border-radius:16px;background:rgba(245,245,255,.7);gap:4px}
+.nav-tab{color:#73799d;padding:10px 17px;border-radius:12px;font-weight:650}
+.nav-tab:hover{color:#504bb0;background:rgba(132,125,237,.10)}
+.nav-tab.active{color:#fff;background:linear-gradient(115deg,#7969e9,#609ce9);box-shadow:0 7px 20px rgba(112,103,221,.24),inset 0 1px 0 rgba(255,255,255,.4)}
+main{max-width:1360px;padding:30px 34px 90px}
+.hero{min-height:68vh;padding:95px 8% 100px}
+.hero h1{color:#272b58;letter-spacing:-.065em}
+.hero h1 span,.hero strong{background:linear-gradient(100deg,#7968e8 10%,#559de8 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p,.page-intro p{color:#74799a}
+.eyebrow{color:#6d70d8}
+.hero:before{background:radial-gradient(circle,rgba(138,125,255,.27),rgba(125,168,255,.08) 58%,transparent 72%);animation:heroFloat 7s ease-in-out infinite,heroPulse 5s ease-in-out infinite}
+.hero:after{border-color:rgba(116,132,225,.22);box-shadow:0 0 45px rgba(123,134,240,.10)}
+@keyframes heroPulse{50%{transform:scale(1.08);opacity:.65}}
+/* Liquid glass surface shared by all cards and workspaces */
+.panel,.result,.spec-card,#assistantWidget .assistant-panel,.translator-page #translate,.video-wrap,.mode,.history-list,.notice{
+ background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(242,244,255,.66))!important;
+ border:1px solid rgba(255,255,255,.94)!important;
+ box-shadow:0 18px 55px rgba(91,94,174,.10),0 3px 12px rgba(104,121,201,.06),inset 0 1px 0 rgba(255,255,255,.98)!important;
+ color:#30345f;
+ backdrop-filter:blur(22px) saturate(165%);-webkit-backdrop-filter:blur(22px) saturate(165%);
+}
+.panel{border-radius:27px;padding:30px;position:relative;overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.panel:after,.spec-card:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(115deg,rgba(255,255,255,.38),transparent 28%,transparent 72%,rgba(151,164,255,.10));opacity:.7}
+.panel:hover{transform:translateY(-4px);box-shadow:0 25px 65px rgba(91,94,174,.15),inset 0 1px 0 #fff!important}
+.panel h2,.panel h3,.section-heading h2{color:#30345f}
+.result{border-radius:18px!important;padding:17px 19px!important}
+.result strong{color:#34366f}
+.small,.tiny,.mode span{color:#777da0!important}
+.mode{background:rgba(255,255,255,.62)!important;border:1px solid rgba(133,137,220,.18)!important;border-radius:18px!important;box-shadow:0 8px 24px rgba(103,109,190,.06)!important;transition:transform .3s,box-shadow .3s,border-color .3s!important}
+.mode:hover,.mode.active{background:linear-gradient(135deg,rgba(224,221,255,.9),rgba(222,239,255,.9))!important;border-color:rgba(119,111,224,.48)!important;box-shadow:0 12px 28px rgba(109,112,205,.15)!important;transform:translateY(-5px)!important}
+.mode strong{color:#3d4075}
+.btn{border:1px solid rgba(255,255,255,.7);background:linear-gradient(115deg,#7969e9,#599be9);color:#fff;border-radius:14px;padding:13px 21px;font-weight:700;box-shadow:0 10px 25px rgba(107,108,219,.22);transition:transform .25s,box-shadow .25s,filter .25s}
+.btn:hover:not(:disabled){transform:translateY(-3px) scale(1.015);box-shadow:0 15px 32px rgba(107,108,219,.30);filter:saturate(1.12)}
+.btn.secondary{color:#5d60aa;background:linear-gradient(120deg,rgba(235,232,255,.9),rgba(225,241,255,.9));border:1px solid rgba(132,129,221,.18);box-shadow:0 6px 18px rgba(102,111,194,.08)}
+.btn.danger{background:linear-gradient(120deg,#df7792,#c86d9c);color:white}
+input,select,textarea{color:#30345f!important;background:rgba(255,255,255,.82)!important;border:1px solid rgba(130,132,211,.24)!important;border-radius:13px!important;box-shadow:inset 0 1px 3px rgba(85,90,150,.04)}
+input::placeholder,textarea::placeholder{color:#a0a4bd}
+.video-wrap{border-radius:22px!important;overflow:hidden}
+.video-wrap video{border-radius:18px}
+.placeholder{color:#777da0}
+.translation-text{color:#393b78}
+.history-list{border-radius:16px;padding:15px}
+.tab-page.active{animation:tabBloom .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes tabBloom{from{opacity:0;transform:translateY(18px) scale(.99);filter:blur(5px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+.page-intro{padding:38px 0 28px}.page-intro h1{color:#30345f}
+.section{margin-top:34px}
+/* Soft shimmer on glass, restrained so text remains clear */
+@keyframes glassSweep{0%{transform:translateX(-130%) rotate(12deg)}45%,100%{transform:translateX(160%) rotate(12deg)}}
+.panel:hover:before{content:"";position:absolute;z-index:0;top:-35%;left:0;width:38%;height:170%;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent);animation:glassSweep 1.3s ease both}
+.intro-loader{background:radial-gradient(ellipse at 50% 42%,#ffffff 0%,#f0efff 42%,#dcecff 100%);color:#34366f}
+.intro-loader:before,.intro-loader:after{content:"";position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none}
+.intro-loader:before{width:65vw;height:65vw;max-width:720px;max-height:720px;border:1px solid rgba(126,117,230,.18);box-shadow:0 0 80px rgba(138,132,245,.14),inset 0 0 70px rgba(137,174,255,.12);animation:loaderBreath 5s ease-in-out infinite}
+.intro-loader:after{width:35vw;height:35vw;max-width:390px;max-height:390px;background:radial-gradient(circle,rgba(153,142,255,.18),rgba(133,196,255,.10) 52%,transparent 72%);animation:loaderBreath 4s ease-in-out infinite reverse}
+@keyframes loaderBreath{50%{transform:scale(1.08) rotate(12deg);opacity:.6}}
+.loader-wordmark{color:#35366f;text-shadow:0 4px 25px rgba(119,111,220,.12)}
+.loader-caption{color:#7479b2}.loader-status{color:#8589b4}
+.loader-track{background:rgba(113,118,203,.13);height:4px}.loader-track span{background:linear-gradient(90deg,#8d79ef,#70a6ef,#b6a7ff);box-shadow:0 0 16px rgba(125,121,237,.45)}
+.loader-orbit{border-color:rgba(121,119,220,.18)}
+.orbit-one:after,.orbit-two:after{background:#7c83ed;box-shadow:0 0 20px #8d9bf4}
+.logo-mark{filter:drop-shadow(0 12px 24px rgba(108,117,218,.25))}
+.logo-hand{stroke:#fff}
+#assistantWidget .assistant-panel{color:#30345f!important;border-radius:24px!important}
+#assistantWidget .assistant-bubble{background:linear-gradient(135deg,#7969e9,#599be9);box-shadow:0 12px 30px rgba(107,108,219,.3)}
+#assistantWidget *{color:inherit}
+
+/* Keep the assistant usable at extreme browser zoom levels. The widget is
+   viewport-fixed and its header controls never wrap or get pushed below. */
+/* Robust floating assistant: independent of page layout, zoom level, and narrow viewports. */
+#assistantWidget {
+    position:fixed !important;
+    right:max(12px, env(safe-area-inset-right)) !important;
+    bottom:max(12px, env(safe-area-inset-bottom)) !important;
+    z-index:2147483000 !important;
+    width:auto !important;
+    max-width:calc(100vw - 24px) !important;
+    max-height:calc(100dvh - 24px) !important;
+    pointer-events:none;
+}
+#assistantWidget > * { pointer-events:auto; }
+#assistantWidget .assistant-panel[hidden] {
+    display:none !important;
+}
+#assistantWidget .assistant-bubble[hidden] {
+    display:none !important;
+}
+#assistantWidget .assistant-panel {
+    width:min(360px, calc(100vw - 24px)) !important;
+    height:min(500px, calc(100dvh - 24px)) !important;
+    max-width:calc(100vw - 24px) !important;
+    max-height:calc(100dvh - 24px) !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    margin:0 0 12px 0 !important;
+    padding:14px !important;
+    overflow:hidden !important;
+    display:flex !important;
+    flex-direction:column !important;
+}
+#assistantWidget .assistant-header {
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    min-height:46px !important;
+    margin:0 !important;
+    padding:0 0 10px !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) 36px !important;
+    align-items:center !important;
+    gap:10px !important;
+    flex:0 0 auto !important;
+    flex-wrap:nowrap !important;
+    box-sizing:border-box !important;
+}
+#assistantWidget .assistant-header > div {
+    min-width:0 !important;
+    overflow:hidden !important;
+}
+#assistantWidget .assistant-header strong,
+#assistantWidget .assistant-header .small {
+    display:block !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+}
+#assistantWidget .assistant-minimize {
+    width:36px !important;
+    min-width:36px !important;
+    max-width:36px !important;
+    height:36px !important;
+    min-height:36px !important;
+    max-height:36px !important;
+    padding:0 !important;
+    margin:0 !important;
+    flex:0 0 36px !important;
+    display:grid !important;
+    place-items:center !important;
+    line-height:1 !important;
+    box-sizing:border-box !important;
+}
+#assistantWidget .assistant-panel .chatlog {
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    margin:12px 0 !important;
+}
+#assistantWidget .chatrow {
+    width:100% !important;
+    min-width:0 !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    align-items:stretch !important;
+    gap:8px !important;
+    flex:0 0 auto !important;
+}
+#assistantWidget .chatrow input {
+    width:100% !important;
+    min-width:0 !important;
+}
+#assistantWidget .chatrow .btn {
+    min-width:0 !important;
+    white-space:nowrap !important;
+}
+@media(max-width:420px) {
+    #assistantWidget {
+        right:12px !important;
+        bottom:12px !important;
+    }
+    #assistantWidget .assistant-panel {
+        width:calc(100vw - 24px) !important;
+        height:min(500px, calc(100dvh - 24px)) !important;
+        padding:12px !important;
+    }
+}
+@media(max-height:560px) {
+    #assistantWidget .assistant-panel {
+        height:calc(100dvh - 24px) !important;
+    }
+}
+@media(max-width:850px){header{position:relative;top:auto;margin:10px 14px 0;padding:18px;border-radius:20px}main{padding:20px 18px 70px}}
+@media(max-width:540px){header{margin:8px 9px 0;padding:15px}main{padding:16px 12px 60px}.panel{padding:20px;border-radius:22px}.hero{padding:54px 4% 65px}.primary-nav{width:100%;overflow-x:auto}.nav-tab{padding:9px 13px}}
+@media(prefers-reduced-motion:reduce){body:before,body:after,.panel:hover:before{animation:none!important}}
+
 </style>
 </head>
 
 <body>
+<div class="intro-loader" id="introLoader" aria-label="SignBridge loading">
+    <div class="loader-orbit orbit-one"></div><div class="loader-orbit orbit-two"></div>
+    <div class="loader-content">
+        <div class="logo-mark" aria-hidden="true">
+            <svg viewBox="0 0 120 120" role="img" aria-label="SignBridge symbol">
+                <defs><linearGradient id="logoGradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9baff"/><stop offset=".52" stop-color="#738bff"/><stop offset="1" stop-color="#dff2ff"/></linearGradient></defs>
+                <path class="logo-bridge" d="M18 77 Q60 19 102 77" fill="none" stroke="url(#logoGradient)" stroke-width="8" stroke-linecap="round"/>
+                <path class="logo-deck" d="M14 83 H106" fill="none" stroke="url(#logoGradient)" stroke-width="7" stroke-linecap="round"/>
+                <path class="logo-hand" d="M36 82 V59 Q36 53 41 53 Q46 53 46 59 V69 M46 68 V48 Q46 42 51 42 Q56 42 56 48 V67 M56 67 V51 Q56 45 61 45 Q66 45 66 51 V69 M66 69 V58 Q66 52 71 52 Q76 52 76 58 V77 Q76 88 64 92 H48 Q37 91 36 82Z" fill="none" stroke="#f7f9ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle class="logo-spark" cx="91" cy="29" r="5" fill="#dce8ff"/>
+            </svg>
+        </div>
+        <div class="loader-wordmark">Sign<span>Bridge</span></div>
+        <div class="loader-caption">COMMUNICATION WITHOUT BARRIERS</div>
+        <div class="loader-track"><span></span></div>
+        <div class="loader-status">Preparing your experience</div>
+    </div>
+</div>
+<!-- Floating SignBridge AI assistant -->
+<div id="assistantWidget">
+    <section
+        id="assistantPanel"
+        class="assistant-panel"
+        aria-label="SignBridge AI assistant"
+        hidden
+    >
+        <header class="assistant-header">
+            <div>
+                <strong>SignBridge AI</strong>
+                <div class="small">Your sign-language assistant</div>
+            </div>
+            <button
+                id="assistantMinimize"
+                class="assistant-minimize"
+                aria-label="Minimise assistant"
+                type="button"
+            >−</button>
+        </header>
 
+        <div class="chatlog" id="chatlog">
+            <div class="bubble">Hello! I'm the SignBridge assistant. I can explain recognised results and answer questions. I cannot independently interpret your camera feed.</div>
+        </div>
+
+        <div class="chatrow">
+            <input
+                id="message"
+                placeholder="Ask SignBridge..."
+                maxlength="4000"
+                aria-label="Message to SignBridge"
+            >
+            <button class="btn" id="send" type="button">Send</button>
+        </div>
+    </section>
+
+    <button
+        id="assistantBubble"
+        class="assistant-bubble"
+        type="button"
+        aria-label="Open SignBridge AI assistant"
+        aria-expanded="false"
+        aria-controls="assistantPanel"
+    >💬</button>
+</div>
+<div class="app-shell" id="appShell">
 <header>
     <div class="brand">Sign<span>Bridge</span></div>
     <div class="header-right">
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#translate">Translate</a>
-            <a href="#about">About</a>
+        <nav class="primary-nav" aria-label="Main navigation">
+            <button class="nav-tab active" type="button" data-tab="home" aria-selected="true">Home</button>
+            <button class="nav-tab" type="button" data-tab="translator" aria-selected="false">Translator</button>
+            <button class="nav-tab" type="button" data-tab="specifications" aria-selected="false">Specifications</button>
+            <button class="nav-tab" type="button" data-tab="about" aria-selected="false">About</button>
         </nav>
         <div class="status">
             <i class="status-dot" id="healthDot"></i>
@@ -360,6 +1026,7 @@ footer {
 
 <main>
 
+<section class="tab-page active" id="home-page" data-page="home">
 <section class="hero" id="home">
     <div class="eyebrow">Accessible communication technology</div>
     <h1>Communication without barriers.</h1>
@@ -369,11 +1036,14 @@ footer {
         translation and AI assistance together.
     </p>
     <div class="controls">
-        <a href="#translate"><button class="btn">Open translation workspace</button></a>
-        <a href="#about"><button class="btn secondary">Explore SignBridge</button></a>
+        <button class="btn" type="button" data-open-tab="translator">Open translation workspace</button>
+        <button class="btn secondary" type="button" data-open-tab="about">Explore SignBridge</button>
     </div>
 </section>
+</section>
 
+<section class="tab-page translator-page" id="translator-page" data-page="translator">
+<div class="page-intro"><div class="eyebrow">SIGN LANGUAGE WORKSPACE</div><h1>Translator</h1><p>Choose a mode, start your camera, and view your live recognition results.</p></div>
 <section class="panel section" id="translate">
     <div class="section-heading">
         <h2>Choose your recognition mode</h2>
@@ -526,56 +1196,54 @@ footer {
         <strong>AI explanation:</strong> No translation selected.
     </div>
 </section>
+</section>
 
 <!-- Floating assistant navigation target -->
 <span id="assistant" class="hidden" aria-hidden="true"></span>
 
-<!-- Floating SignBridge AI assistant -->
-<div id="assistantWidget">
-    <section
-        id="assistantPanel"
-        class="assistant-panel"
-        aria-label="SignBridge AI assistant"
-        hidden
-    >
-        <header class="assistant-header">
-            <div>
-                <strong>SignBridge AI</strong>
-                <div class="small">Your sign-language assistant</div>
-            </div>
-            <button
-                id="assistantMinimize"
-                class="assistant-minimize"
-                aria-label="Minimise assistant"
-                type="button"
-            >−</button>
-        </header>
 
-        <div class="chatlog" id="chatlog">
-            <div class="bubble">Hello! I'm the SignBridge assistant. I can explain recognised results and answer questions. I cannot independently interpret your camera feed.</div>
+
+<section class="tab-page" id="specifications-page" data-page="specifications">
+<section class="section specs-section" id="specifications">
+    <div class="section-heading specs-heading">
+        <div>
+            <div class="eyebrow">Platform overview</div>
+            <h2>Specifications at a glance</h2>
+            <p class="muted">A clear overview of the technologies and capabilities currently connected to SignBridge.</p>
         </div>
+        <span class="specs-tag">SYSTEM DETAILS</span>
+    </div>
+    <div class="spec-grid">
+        <article class="spec-card">
+            <span class="spec-index">01 / TRACKING</span>
+            <div class="spec-value">21 <small>points</small></div>
+            <h3>Hand landmarks</h3>
+            <p>MediaPipe tracks 21 landmarks on each detected hand for browser-based hand movement analysis.</p>
+        </article>
+        <article class="spec-card">
+            <span class="spec-index">02 / CAPACITY</span>
+            <div class="spec-value">02 <small>hands</small></div>
+            <h3>Multi-hand support</h3>
+            <p>The live tracking pipeline is configured to detect up to two hands at the same time.</p>
+        </article>
+        <article class="spec-card">
+            <span class="spec-index">03 / COUNTING</span>
+            <div class="spec-value">0–10</div>
+            <h3>Finger counting</h3>
+            <p>Generic mode estimates extended fingers across one or both hands. It is separate from sign translation.</p>
+        </article>
+        <article class="spec-card">
+            <span class="spec-index">04 / RECOGNITION</span>
+            <div class="spec-value">4 <small>sec</small></div>
+            <h3>Sign capture window</h3>
+            <p>Continuous ISL recognition captures successive short video clips for backend processing.</p>
+        </article>
+    </div>
+    <div class="spec-footnote">Recognition availability depends on the connected backend. ISL recognition is experimental; ASL, BSL and CSL models are not currently connected.</div>
+</section>
+</section>
 
-        <div class="chatrow">
-            <input
-                id="message"
-                placeholder="Ask SignBridge..."
-                maxlength="4000"
-                aria-label="Message to SignBridge"
-            >
-            <button class="btn" id="send" type="button">Send</button>
-        </div>
-    </section>
-
-    <button
-        id="assistantBubble"
-        class="assistant-bubble"
-        type="button"
-        aria-label="Open SignBridge AI assistant"
-        aria-expanded="false"
-        aria-controls="assistantPanel"
-    >💬</button>
-</div>
-
+<section class="tab-page" id="about-page" data-page="about">
 <section class="panel section" id="about">
     <h2>About SignBridge</h2>
     <p class="muted">
@@ -616,6 +1284,7 @@ footer {
         appropriate consent process.
     </p>
 </section>
+</section>
 
 </main>
 
@@ -625,6 +1294,35 @@ footer {
     Sign-language recognition is experimental until validated
     with appropriately licensed datasets and diverse signers.
 </footer>
+
+</div>
+
+
+<script>
+(() => {
+  const loader = document.getElementById('introLoader');
+  const app = document.getElementById('appShell');
+  const tabs = [...document.querySelectorAll('.nav-tab')];
+  const pages = [...document.querySelectorAll('.tab-page[data-page]')];
+  function openTab(name) {
+    pages.forEach(page => page.classList.toggle('active', page.dataset.page === name));
+    tabs.forEach(tab => {
+      const active = tab.dataset.tab === name;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', String(active));
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  tabs.forEach(tab => tab.addEventListener('click', () => openTab(tab.dataset.tab)));
+  document.querySelectorAll('[data-open-tab]').forEach(button => button.addEventListener('click', () => openTab(button.dataset.openTab)));
+  window.addEventListener('DOMContentLoaded', () => {});
+  window.setTimeout(() => {
+    loader.classList.add('exit');
+    document.body.classList.add('app-ready');
+    window.setTimeout(() => loader.remove(), 1250);
+  }, 5000);
+})();
+</script>
 
 <script type="module">
 import {
