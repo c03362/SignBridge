@@ -190,11 +190,15 @@ textarea {resize:vertical;min-height:85px}
     gap:9px;margin:12px 0
 }
 .bubble {
-    padding:10px 12px;border-radius:12px;
-    background:var(--panel2);max-width:95%;overflow-wrap:anywhere;
-    white-space:pre-wrap
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--panel2);
+    max-width: 95%;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    background: linear-gradient(128deg, #85b6ff, #f6daff);
 }
-.bubble.user {align-self:flex-end;background:#1c5260}
+.bubble.user {align-self:flex-end; background:linear-gradient(185deg,#00f7ff,#26ff43);color:#00ff73}
 .chatrow {display:flex;gap:8px}
 .chatrow input {flex:1;min-width:0}
 
@@ -227,34 +231,51 @@ textarea {resize:vertical;min-height:85px}
 .assistant-bubble:hover {transform:scale(1.06)}
 .assistant-bubble[hidden] {display:none!important}
 .assistant-panel {
-    width:min(360px,calc(100vw - 24px));
-    max-width:calc(100vw - 24px);
-    height:min(500px,calc(100dvh - 100px));
-    max-height:calc(100dvh - 24px);
-    min-height:0;
-    box-sizing:border-box;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:16px;
-    padding:14px;
-    box-shadow:0 8px 35px #0008;
-    display:flex;
-    flex-direction:column;
-    margin-bottom:12px;
-    overflow:hidden;
+    width: 360px !important; /* Forces a fixed, non-squishing width */
+    min-width: 360px !important;
+    max-width: calc(100vw - 24px);
+    height: min(500px, calc(100dvh - 100px));
+    max-height: calc(100dvh - 24px);
+    box-sizing: border-box;
+    background: rgba(14, 31, 48, .96);
+    border: 1px solid rgba(0, 54, 46, 0.4);
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: 0 12px 34px rgb(43, 43, 43), 0 0 0 7px rgb(0, 54, 46);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(22px);
 }
-.assistant-panel[hidden] {display:none!important}
+
 .assistant-header {
-    max-width: none;
-    width: 100%;
-    min-width: 0;
-    margin: 0;
-    padding: 0 14px 10px 14px; 
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid var(--line);
-    flex: 0 0 auto;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 10px 0 !important;
+    padding: 10px 14px !important; 
+    display: flex !important;
+    flex-wrap: nowrap !important; /* Locks header items in a single straight line */
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 10px !important;
+    border-bottom: none !important;
+    flex: 0 0 auto !important;
+    background: linear-gradient(90deg, #fc98ff 70%, #007bac) !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+}
+
+/* Forces the text container to truncate safely if space ever gets restricted */
+.assistant-header > div:first-child {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    overflow: hidden !important;
+}
+.assistant-header::after, 
+.assistant-header::before {
+    display: none !important;
 }
 .assistant-header > div:first-child {
     min-width:0;
@@ -299,8 +320,17 @@ textarea {resize:vertical;min-height:85px}
 @media(max-width:480px) {
     #assistantWidget {right:12px;bottom:12px}
     .assistant-panel {
-        width:calc(100vw - 24px);
-        height:min(480px,calc(100dvh - 100px));
+        width: min(340px, calc(100vw - 24px)) !important;
+        min-width: 300px !important;
+        height: min(480px, calc(100dvh - 100px));
+    }
+    .assistant-header {
+        flex-wrap: nowrap !important;
+    }
+    .assistant-header > div:first-child {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        overflow: hidden !important;
     }
 }
 
@@ -524,14 +554,13 @@ footer {max-width:1400px;padding:26px 34px 42px;line-height:1.8}
 .assistant-bubble {
     width:66px;height:66px;
     background:linear-gradient(145deg,#2a9d9b,#176b78);
-    box-shadow:0 12px 34px rgba(0,0,0,.36),0 0 0 7px rgba(113,228,210,.08);
+
 }
 .assistant-panel {
     border-radius:20px;
     padding:18px;
     background:rgba(14,31,48,.96);
     border-color:rgba(145,183,205,.2);
-    box-shadow:0 24px 80px rgba(0,0,0,.45);
     backdrop-filter:blur(22px);
 }
 .specs-section {padding:12px 0 4px}
@@ -658,8 +687,8 @@ main {max-width:1320px;padding:26px 34px 90px;min-height:70vh}
 .controls {gap:12px}
 .btn {border:1px solid rgba(198,207,255,.2);background:linear-gradient(115deg,#7183ff,#8170e9);box-shadow:0 9px 26px rgba(91,103,224,.2);border-radius:12px;padding:12px 19px;color:#fff;transition:transform .22s,box-shadow .22s,filter .22s}
 .btn:hover {transform:translateY(-2px);box-shadow:0 13px 32px rgba(91,103,224,.3);filter:brightness(1.08)}
-.btn.secondary {background:rgba(144,158,255,.08);border-color:rgba(173,187,255,.22);box-shadow:none;color:#e5eaff}
-.panel,.result,.spec-card {background:linear-gradient(145deg,rgba(22,29,61,.9),rgba(14,19,42,.88));border-color:rgba(164,179,255,.15);box-shadow:0 18px 55px rgba(0,0,0,.13)}
+.btn.secondary {background:rgba(255, 144, 144, 0.08);border-color:rgba(173,187,255,.22);box-shadow:none;color:#e5eaff}
+.panel,.result,.spec-card {background:linear-gradient(145deg,rgba(22,29,61,.9),rgba(14,19,42,.88));border-color:rgba(0, 42, 255, 0.15);box-shadow:0 18px 55px rgba(0,0,0,.13)}
 .panel {border-radius:23px;padding:27px}
 .section {margin-top:28px}
 .page-intro {padding:24px 0 22px;max-width:760px}
@@ -773,7 +802,7 @@ main{max-width:1360px;padding:30px 34px 90px}
 .hero:after{border-color:rgba(116,132,225,.22);box-shadow:0 0 45px rgba(123,134,240,.10)}
 @keyframes heroPulse{50%{transform:scale(1.08);opacity:.65}}
 /* Liquid glass surface shared by all cards and workspaces */
-.panel,.result,.spec-card,#assistantWidget .assistant-panel,.translator-page #translate,.video-wrap,.mode,.history-list,.notice{
+.panel,.result,.spec-card,.translator-page #translate,.video-wrap,.mode,.history-list,.notice{
  background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(242,244,255,.66))!important;
  border:1px solid rgba(255,255,255,.94)!important;
  box-shadow:0 18px 55px rgba(91,94,174,.10),0 3px 12px rgba(104,121,201,.06),inset 0 1px 0 rgba(255,255,255,.98)!important;
@@ -794,7 +823,7 @@ main{max-width:1360px;padding:30px 34px 90px}
 .btn:hover:not(:disabled){transform:translateY(-3px) scale(1.015);box-shadow:0 15px 32px rgba(107,108,219,.30);filter:saturate(1.12)}
 .btn.secondary{color:#5d60aa;background:linear-gradient(120deg,rgba(235,232,255,.9),rgba(225,241,255,.9));border:1px solid rgba(132,129,221,.18);box-shadow:0 6px 18px rgba(102,111,194,.08)}
 .btn.danger{background:linear-gradient(120deg,#df7792,#c86d9c);color:white}
-input,select,textarea{color:#30345f!important;background:rgba(255,255,255,.82)!important;border:1px solid rgba(130,132,211,.24)!important;border-radius:13px!important;box-shadow:inset 0 1px 3px rgba(85,90,150,.04)}
+input,select,textarea{color:#ffffff!important;background:rgba(255,255,255,.82)!important;border:1px solid rgba(130,132,211,.24)!important;border-radius:13px!important;box-shadow:inset 0 1px 3px rgba(85,90,150,.04)}
 input::placeholder,textarea::placeholder{color:#a0a4bd}
 .video-wrap{border-radius:22px!important;overflow:hidden}
 .video-wrap video{border-radius:18px}
@@ -845,59 +874,68 @@ input::placeholder,textarea::placeholder{color:#a0a4bd}
     display:none !important;
 }
 #assistantWidget .assistant-panel {
-    width:min(360px, calc(100vw - 24px)) !important;
-    height:min(500px, calc(100dvh - 24px)) !important;
-    max-width:calc(100vw - 24px) !important;
-    max-height:calc(100dvh - 24px) !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    margin:0 0 12px 0 !important;
-    padding:14px !important;
-    overflow:hidden !important;
-    display:flex !important;
-    flex-direction:column !important;
-}
-#assistantWidget .assistant-header {
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-    min-height:46px !important;
-    grid-template-columns:minmax(0,1fr) 36px !important;
-    flex:0 0 auto !important;
-    flex-wrap:nowrap !important;
-    box-sizing:border-box !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 10px 13px !important; 
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+    height: min(500px, calc(100dvh - 100px)) !important;
     box-sizing: border-box !important;
-    gap: 12px !important;
+    background: rgba(14, 31, 48, .96) !important;
+    border-radius: 20px !important;
+    padding: 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 12px !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(22px) !important;
 }
-#assistantWidget .assistant-header > div {
+#assistantWidget .assistant-header{
+    position:relative;
+    padding-right:52px !important;
+}
+
+#assistantWidget .assistant-minimize{
+    position:absolute !important;
+    right:12px !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+
+    width:36px;
+    height:36px;
+}
+#assistantWidget .assistant-header > div:first-child{
+    flex:1 1 auto !important;
     min-width:0 !important;
     overflow:hidden !important;
+}
+@media(max-width: 480px) {
+    #assistantWidget .assistant-panel {
+        width: 360px !important;
+        min-width: 360px !important;
+        max-width: 360px !important;
+    }
 }
 #assistantWidget .assistant-header strong,
-#assistantWidget .assistant-header .small {
-    display:block !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-    white-space:nowrap !important;
+#assistantWidget .assistant-header .small{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
-#assistantWidget .assistant-minimize {
-    width: 36px !important;
-    min-width: 36px !important;
-    max-width: 36px !important;
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    flex: 0 0 36px !important;
-    display: grid !important;
-    place-items: center !important;
-    line-height: 1 !important;
-    box-sizing: border-box !important;
+#assistantWidget .assistant-minimize{
+    flex:0 0 auto !important;
+
+    width:36px;
+    height:36px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:0;
+    margin:0;
+
+    position:relative;
+    top:0;
+    right:0;
 }
 #assistantWidget .assistant-panel .chatlog {
     flex:1 1 auto !important;
@@ -919,10 +957,12 @@ input::placeholder,textarea::placeholder{color:#a0a4bd}
 #assistantWidget .chatrow input {
     width:100% !important;
     min-width:0 !important;
+    background: linear-gradient(145deg, #250f0f, #003068) !important;
 }
 #assistantWidget .chatrow .btn {
     min-width:0 !important;
     white-space:nowrap !important;
+    
 }
 @media(max-width:420px) {
     #assistantWidget {
@@ -944,6 +984,12 @@ input::placeholder,textarea::placeholder{color:#a0a4bd}
 @media(max-width:540px){header{margin:8px 9px 0;padding:15px}main{padding:16px 12px 60px}.panel{padding:20px;border-radius:22px}.hero{padding:54px 4% 65px}.primary-nav{width:100%;overflow-x:auto}.nav-tab{padding:9px 13px}}
 @media(prefers-reduced-motion:reduce){body:before,body:after,.panel:hover:before{animation:none!important}}
 
+#assistantWidget .assistant-panel {
+    background: linear-gradient(145deg, #061253 15%, #00520e) !important;
+    border: 1px solid rgba(0, 54, 46, 0.4) !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(22px) !important;
+}
 </style>
 </head>
 
@@ -998,7 +1044,7 @@ input::placeholder,textarea::placeholder{color:#a0a4bd}
                 maxlength="4000"
                 aria-label="Message to SignBridge"
             >
-            <button class="btn" id="send" type="button">Send</button>
+            <button class="btn" id="send" type="button" style="color: white">Send</button>
         </div>
     </section>
 
